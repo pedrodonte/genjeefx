@@ -1,0 +1,30 @@
+package {0};
+
+import {1};//fullEJB
+import {2};//fullVO
+import info.pedrodonte.util.AbsMantenedorMB;
+import info.pedrodonte.util.CrudGenericServiceApi;
+
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+@Named
+@SessionScoped
+public class {3} extends AbsMantenedorMB<{4}> [ //controller , vo
+
+	private static final long serialVersionUID = 123456789L;
+
+	@Inject
+	private {5} serviceEJB; //EJB
+
+	public {3}() [
+		super({4}.class);
+	]
+
+	@Override
+	public CrudGenericServiceApi<{4}> asignarCrudService() [
+		return serviceEJB;
+	]
+
+]

@@ -1,0 +1,11 @@
+package {0};
+
+import javax.ejb.Local;
+
+import {1};
+import info.pedrodonte.util.CrudGenericServiceApi;
+
+@Local
+public interface {2} extends CrudGenericServiceApi<{3}>[
+
+]

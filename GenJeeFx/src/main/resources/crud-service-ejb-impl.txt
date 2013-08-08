@@ -1,0 +1,53 @@
+package {0};
+
+import {1};
+import {2};
+import {9}.ErrorDelSistemaException;
+import {9}.RegistrosNoEncontradosException;
+import {3};
+
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+@Stateless
+public class {4} implements {5} [ //EJB EJBImpl
+
+	@Inject
+	{6} {7};
+	
+	@Override
+	public {8} nuevoRegistro({8} registro) throws ErrorDelSistemaException [
+		
+		throw new UnsupportedOperationException("Metodo Sin Implementar");
+		
+		return registro;
+	]
+
+	@Override
+	public {8} actualizarRegistro({8} registro)	throws ErrorDelSistemaException [
+		
+		throw new UnsupportedOperationException("Metodo Sin Implementar");
+		
+		return registro;
+	]
+
+	@Override
+	public void eliminarRegistro({8} registro) throws ErrorDelSistemaException [
+		
+		throw new UnsupportedOperationException("Metodo Sin Implementar");
+
+	]
+
+	@Override
+	public List<{8}> obtenerRegistros()	throws ErrorDelSistemaException, RegistrosNoEncontradosException [
+		
+		List<{8}> registros = new ArrayList<>();
+		
+		throw new UnsupportedOperationException("Metodo Sin Implementar");
+		
+		return registros;
+	]
+
+]

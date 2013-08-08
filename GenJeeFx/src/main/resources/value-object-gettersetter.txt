@@ -1,0 +1,7 @@
+	public {0} get{2}() [
+		return this.{1};
+	]
+	
+	public void set{2}({0} {1}) [
+		this.{1} = {1};
+	]

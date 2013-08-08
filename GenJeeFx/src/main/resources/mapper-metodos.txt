@@ -1,0 +1,11 @@
+public {0} toVO({1} dto)[ 
+	{0} vo = new {0}();
+{2}
+	return vo;
+]
+
+public {1} toDTO({0} vo)[ 
+	{1} dto = new {1}();
+{3}
+	return dto;
+]

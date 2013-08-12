@@ -4,40 +4,26 @@ import static generar.Constantes.*;
 
 public class CrudService extends ElementoBase{
 	
-	private ElementoBase crudInterface = new ElementoBase();
-	private ElementoBase crudImplement = new ElementoBase();
-	
-	public CrudService(Vo vo) {
-		String nombreVoSimplificado = simplificarNombreVo(vo.getNombre());
-		this.crudInterface.setNombre(nombreVoSimplificado+SUFIJO_CRUD_INTERFACE);
-		this.crudImplement.setNombre(nombreVoSimplificado+SUFIJO_CRUD_IMPLEMENT);
-	}
-
-	private String simplificarNombreVo(String nombre) {
-		return nombre.replace(PREFIJO_VO, "");
+	public String getNombreEJB(){
+		return getNombre()+SUFIJO_CRUD_INTERFACE;
 	}
 	
-	public ElementoBase getCrudInterface() {
-		return crudInterface;
+	public String getNombreEJBImpl(){
+		return getNombre()+SUFIJO_CRUD_IMPLEMENT;
 	}
-
-	public void setCrudInterface(ElementoBase crudInterface) {
-		this.crudInterface = crudInterface;
+	
+	public String getPackageEJB(){
+		return getPaquete()+"."+getNombre()+SUFIJO_CRUD_INTERFACE;
 	}
-
-	public ElementoBase getCrudImplement() {
-		return crudImplement;
-	}
-
-	public void setCrudImplement(ElementoBase crudImplement) {
-		this.crudImplement = crudImplement;
+	
+	public String getPackageEJBImpl(){
+		return getPaquete()+"."+getNombre()+SUFIJO_CRUD_IMPLEMENT;
 	}
 
 	@Override
-	public void setPaquete(String paquete) {
-		super.setPaquete(paquete);
-		crudImplement.setPaquete(paquete);
-		crudInterface.setPaquete(paquete);
+	public void setNombre(String nombre) {
+		super.setNombre(nombre.replace(PREFIJO_VO, ""));
 	}
+
 
 }

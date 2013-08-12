@@ -2,8 +2,10 @@ package generar.engine;
 
 import generar.Constantes;
 import generar.modelo.Atributo;
+import generar.modelo.Entidad;
 import generar.modelo.Proyecto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import util.StringHelper;
@@ -16,7 +18,7 @@ public class GenerarVO {
 		this.proyecto = proyecto;
 	}
 
-	public Atributo getDeficinionAtributoVO(Atributo aDto) {
+	private Atributo getDeficinionAtributoVO(Atributo aDto) {
 
 		Atributo at = null;
 		try {
@@ -31,20 +33,18 @@ public class GenerarVO {
 
 			String nombreType = cambioNombreEntityToVO(at.getTipo().getNombre());
 			String nombreAtributo = cambioNombreEntityToVO(at.getNombre());
-			
-			
 
 			if (!at.getTipo().isEsPrimitivo()) {
-				
-				String paqueteAtributoVo = cambioPaqueteTipoDatoEntidad(at.getTipo().getPaquete());
-				
+
+				String paqueteAtributoVo = cambioPaqueteTipoDatoEntidad(at
+						.getTipo().getPaquete());
+
 				at.getTipo().setPaquete(paqueteAtributoVo);
 			}
 
 			at.setNombre(nombreAtributo);
 			at.getTipo().setNombre(nombreType);
 		} catch (Exception e) {
-			System.out.println(at.toString());
 			e.printStackTrace();
 		}
 
@@ -52,11 +52,10 @@ public class GenerarVO {
 	}
 
 	private String cambioPaqueteTipoDatoEntidad(String paquete) {
-		boolean esEntidad = (paquete.equals(proyecto
-				.getPaqueteEntrada()));
-		
+		boolean esEntidad = (paquete.equals(proyecto.getPaqueteEntrada()));
+
 		String paqueteTipo = esEntidad ? proyecto.getPaqueteVos() : paquete;
-		
+
 		return paqueteTipo;
 	}
 
@@ -83,6 +82,28 @@ public class GenerarVO {
 
 	private List<String> getPrefijosEntidades() {
 		return StringHelper.proListado(proyecto.getPrefijosEntidades());
+	}
+
+	/**
+	 * Procesa los atributos del DTO y los habilita para que pertenesca al VO,
+	 * Además genera la tabla de mapeo que se usara para 
+	 * construir el Mapper entre DTO y VO.
+	 * 
+	 * @param DTO con sus Atributos
+	 * @return lista de atributos para el VO
+	 */
+	public List<Atributo> adaptarAtributosEntidad(Entidad entidad) {
+		List<Atributo> atributosVO = new ArrayList<>();
+		for (Atributo aDTO : entidad.getAtributos()) {
+			if (!aDTO.getTipo().isEsInterface()) {
+				if (!aDTO.getNombre().equals("serialVersionUID")) {
+					Atributo aVO = this.getDeficinionAtributoVO(aDTO);
+					atributosVO.add(aVO);
+					entidad.getMapeoAtributosVoDto().put(aVO, aDTO);
+				}
+			}
+		}
+		return atributosVO;
 	}
 
 }

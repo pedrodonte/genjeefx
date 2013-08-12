@@ -1,10 +1,15 @@
 package {0};
 
 {2}
-public class {1} [ 
+public class {1} implements Cloneable[ 
 
 {3}
 
 {4}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException [
+		return super.clone();
+	]
 	
 ]

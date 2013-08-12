@@ -2,7 +2,7 @@ package {0};
 
 {1}
 
-public class HelperVoDto [ 
+public class {3} [ 
 
 {2}
 	

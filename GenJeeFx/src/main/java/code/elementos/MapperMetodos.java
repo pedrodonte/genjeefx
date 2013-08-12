@@ -1,13 +1,13 @@
 package code.elementos;
 
-import static code.PatronesCodigoFuente.MAPPER_DTO_TO_VO;
+import static code.PatronesCodigoFuente.MAPPER_METODOS;
 import code.CodigoFuente;
 import code.SemillaCodigoFuente;
 
 public class MapperMetodos extends CodigoFuente {
 
 	public MapperMetodos() {
-		super(MAPPER_DTO_TO_VO);
+		super(MAPPER_METODOS);
 	}
 
 	@Override
@@ -15,12 +15,19 @@ public class MapperMetodos extends CodigoFuente {
 			SemillaCodigoFuente seed) {
 
 		Object[] parametros = { 
-				seed.getNombreClase(), 
-				seed.getNombreClaseAux(), 
-				seed.getAtributos(), 
-				seed.getAtributosAux() };
+				seed.getClaseVO(), 
+				seed.getClaseDTO(), 
+				seed.getMetodosVO(), 
+				seed.getMetodosDTO()
+			};
 
 		return parametros;
+	}
+
+	@Override
+	public String getPath(SemillaCodigoFuente seed) {
+		seed.setCreaArchivo(false);
+		return null;
 	}
 
 }

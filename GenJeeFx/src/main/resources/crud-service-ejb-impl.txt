@@ -5,7 +5,9 @@ import {2};
 import {9}.ErrorDelSistemaException;
 import {9}.RegistrosNoEncontradosException;
 import {3};
+import {11};
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -17,10 +19,13 @@ public class {4} implements {5} [ //EJB EJBImpl
 	@Inject
 	{6} {7};
 	
+	{12} {13} = new {12}();
+	
 	@Override
 	public {8} nuevoRegistro({8} registro) throws ErrorDelSistemaException [
 		
-		throw new UnsupportedOperationException("Metodo Sin Implementar");
+		{10} dto = {13}.toDTO(registro);
+		{7}.save(dto);
 		
 		return registro;
 	]
@@ -28,7 +33,8 @@ public class {4} implements {5} [ //EJB EJBImpl
 	@Override
 	public {8} actualizarRegistro({8} registro)	throws ErrorDelSistemaException [
 		
-		throw new UnsupportedOperationException("Metodo Sin Implementar");
+		{10} dto = {13}.toDTO(registro);
+		{7}.update(dto);
 		
 		return registro;
 	]
@@ -45,7 +51,10 @@ public class {4} implements {5} [ //EJB EJBImpl
 		
 		List<{8}> registros = new ArrayList<>();
 		
-		throw new UnsupportedOperationException("Metodo Sin Implementar");
+		for ({10} dto : {7}.findAll()) [
+			{8} vo = {13}.toVO(dto);
+			registros.add(vo);
+		]
 		
 		return registros;
 	]

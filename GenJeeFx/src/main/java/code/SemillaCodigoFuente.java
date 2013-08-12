@@ -1,27 +1,19 @@
 package code;
 
-import static generar.Constantes.*;
 import util.StringHelper;
 
 public class SemillaCodigoFuente {
 	
 	private String pathDirectorioSalida;
-	private String pathArchivoFuente;
-	private String paqueteClase;
-	private String nombreClase;
-	private String nombreInstancia;
-	private String paqueteClaseAux;
-	private String nombreClaseAux;
-	private String nombreInstanciaAux;
 	private String getterSetters;
 	private String imports;
 	private String atributos;
-	private String atributosAux;
-	private String metodos;
-	private String metodosAux;
-	private String nombreClaseAux2;
-	private String nombreClaseAux3;
+	private String metodosVO;
+	private String metodosDTO;
+	private String metodosMapper;
 	private boolean creaArchivo;
+	
+	private String extension;
 	
 	private String paqueteVO;
 	private String claseVO;
@@ -47,36 +39,16 @@ public class SemillaCodigoFuente {
 	private String claseMB;
 	private String instanciaMB;
 	
-	public String getPaqueteClase() {
-		return paqueteClase;
-	}
-	public void setPaqueteClase(String paqueteClase) {
-		this.paqueteClase = paqueteClase;
-	}
-	public String getNombreClase() {
-		return nombreClase;
-	}
-	public void setNombreClase(String nombreClase) {
-		this.nombreClase = nombreClase;
-	}
-	public String getNombreInstancia() {
-		return nombreInstancia;
-	}
-	public void setNombreInstancia(String nombreInstancia) {
-		this.nombreInstancia = nombreInstancia;
-	}
-	public String getNombreClaseAux() {
-		return nombreClaseAux;
-	}
-	public void setNombreClaseAux(String nombreClaseAux) {
-		this.nombreClaseAux = nombreClaseAux;
-	}
-	public String getNombreInstanciaAux() {
-		return nombreInstanciaAux;
-	}
-	public void setNombreInstanciaAux(String nombreInstanciaAux) {
-		this.nombreInstanciaAux = nombreInstanciaAux;
-	}
+	private String paqueteMapper;
+	private String claseMapper;
+	private String instanciaMapper;
+	
+	private String tituloFormulario;
+	private String camposTabla;
+	private String camposFormulario;
+	private String rowKey;
+	private String webContent;
+	
 	public String getGetterSetters() {
 		return getterSetters;
 	}
@@ -95,9 +67,6 @@ public class SemillaCodigoFuente {
 	public void setAtributos(String atributos) {
 		this.atributos = atributos;
 	}
-	public String getPathArchivoFuente() {
-		return pathArchivoFuente;
-	}
 	public boolean isCreaArchivo() {
 		return creaArchivo;
 	}
@@ -107,50 +76,10 @@ public class SemillaCodigoFuente {
 	public void setPathDirectorioSalida(String pathDirectorioSalida) {
 		this.pathDirectorioSalida = pathDirectorioSalida;
 	}
-	public String getPaqueteClaseAux() {
-		return paqueteClaseAux;
-	}
-	public void setPaqueteClaseAux(String paqueteClaseAux) {
-		this.paqueteClaseAux = paqueteClaseAux;
-	}
-	public String getMetodos() {
-		return metodos;
-	}
-	public void setMetodos(String metodos) {
-		this.metodos = metodos;
-	}
-	public String getMetodosAux() {
-		return metodosAux;
-	}
-	public void setMetodosAux(String metodosAux) {
-		this.metodosAux = metodosAux;
-	}
-	public String getAtributosAux() {
-		return atributosAux;
-	}
-	public void setAtributosAux(String atributosAux) {
-		this.atributosAux = atributosAux;
-	}
-	
-	
-	
 	public void print(){
 		System.out.println(this);
 	}
-	
 
-	public String getNombreClaseAux2() {
-		return nombreClaseAux2;
-	}
-	public void setNombreClaseAux2(String nombreClaseAux2) {
-		this.nombreClaseAux2 = nombreClaseAux2;
-	}
-	public String getNombreClaseAux3() {
-		return nombreClaseAux3;
-	}
-	public void setNombreClaseAux3(String nombreClaseAux3) {
-		this.nombreClaseAux3 = nombreClaseAux3;
-	}
 	public String getPaqueteVO() {
 		return paqueteVO;
 	}
@@ -245,9 +174,6 @@ public class SemillaCodigoFuente {
 	public String getPathDirectorioSalida() {
 		return pathDirectorioSalida;
 	}
-	public void setPathArchivoFuente(String pathArchivoFuente) {
-		this.pathArchivoFuente = pathArchivoFuente;
-	}
 	public String getFullDao() {
 		return paqueteDAO+"."+claseDAO;
 	}
@@ -266,29 +192,8 @@ public class SemillaCodigoFuente {
 	public String getFullControllerMB() {
 		return paqueteMB+"."+claseMB;
 	}
-	@Override
-	public String toString() {
-		return "SemillaCodigoFuente [pathDirectorioSalida="
-				+ pathDirectorioSalida + ", pathArchivoFuente="
-				+ pathArchivoFuente + ", paqueteClase=" + paqueteClase
-				+ ", nombreClase=" + nombreClase + ", nombreInstancia="
-				+ nombreInstancia + ", paqueteClaseAux=" + paqueteClaseAux
-				+ ", nombreClaseAux=" + nombreClaseAux
-				+ ", nombreInstanciaAux=" + nombreInstanciaAux
-				+ ", getterSetters=" + getterSetters + ", imports=" + imports
-				+ ", atributos=" + atributos + ", atributosAux=" + atributosAux
-				+ ", metodos=" + metodos + ", metodosAux=" + metodosAux
-				+ ", nombreClaseAux2=" + nombreClaseAux2 + ", nombreClaseAux3="
-				+ nombreClaseAux3 + ", creaArchivo=" + creaArchivo
-				+ ", paqueteVO=" + paqueteVO + ", claseVO=" + claseVO
-				+ ", instanciaVO=" + instanciaVO + ", paqueteDAO=" + paqueteDAO
-				+ ", claseDAO=" + claseDAO + ", instanciaDAO=" + instanciaDAO
-				+ ", paqueteDTO=" + paqueteDTO + ", claseDTO=" + claseDTO
-				+ ", instanciaDTO=" + instanciaDTO + ", paqueteEJB="
-				+ paqueteEJB + ", claseEJB=" + claseEJB + ", instanciaEJB="
-				+ instanciaEJB + ", paqueteImpl=" + paqueteImpl
-				+ ", claseImpl=" + claseImpl + ", instanciaImpl="
-				+ instanciaImpl + "]";
+	public String getFullMapper() {
+		return paqueteMapper+"."+claseMapper;
 	}
 	public String getPaqueteMB() {
 		return paqueteMB;
@@ -303,10 +208,84 @@ public class SemillaCodigoFuente {
 		this.claseMB = claseMB;
 	}
 	public String getInstanciaMB() {
+		instanciaMB = StringHelper.toCamelMinuscula(claseMB);
 		return instanciaMB;
 	}
 	public void setInstanciaMB(String instanciaMB) {
 		this.instanciaMB = instanciaMB;
+	}
+	public String getPaqueteMapper() {
+		return paqueteMapper;
+	}
+	public void setPaqueteMapper(String paqueteMapper) {
+		this.paqueteMapper = paqueteMapper;
+	}
+	public String getClaseMapper() {
+		return claseMapper;
+	}
+	public void setClaseMapper(String claseMapper) {
+		this.claseMapper = claseMapper;
+	}
+	public String getInstanciaMapper() {
+		instanciaMapper = StringHelper.toCamelMinuscula(claseMapper);
+		return instanciaMapper;
+	}
+	public void setInstanciaMapper(String instanciaMapper) {
+		this.instanciaMapper = instanciaMapper;
+	}
+	public String getMetodosVO() {
+		return metodosVO;
+	}
+	public void setMetodosVO(String metodosVO) {
+		this.metodosVO = metodosVO;
+	}
+	public String getMetodosDTO() {
+		return metodosDTO;
+	}
+	public void setMetodosDTO(String metodosDTO) {
+		this.metodosDTO = metodosDTO;
+	}
+	public String getMetodosMapper() {
+		return metodosMapper;
+	}
+	public void setMetodosMapper(String metodosMapper) {
+		this.metodosMapper = metodosMapper;
+	}
+	public String getTituloFormulario() {
+		return this.tituloFormulario;
+	}
+	public String getCamposTabla() {
+		return this.camposTabla;
+	}
+	public String getCamposFormulario() {
+		return this.camposFormulario;
+	}
+	public String getRowKey() {
+		return this.rowKey;
+	}
+	public void setTituloFormulario(String tituloFormulario) {
+		this.tituloFormulario = tituloFormulario;
+	}
+	public void setCamposTabla(String camposTabla) {
+		this.camposTabla = camposTabla;
+	}
+	public void setCamposFormulario(String camposFormulario) {
+		this.camposFormulario = camposFormulario;
+	}
+	public void setRowKey(String rowKey) {
+		this.rowKey = rowKey;
+	}
+	public String getWebContent() {
+		return webContent;
+	}
+	public void setWebContent(String webContent) {
+		this.webContent = webContent;
+	}
+	public String getExtension() {
+		return extension;
+	}
+	public void setExtension(String extension) {
+		this.extension = extension;
 	}
 
 }

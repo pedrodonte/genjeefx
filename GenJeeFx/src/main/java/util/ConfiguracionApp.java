@@ -37,7 +37,7 @@ public class ConfiguracionApp {
 			xmlConfig = new AplicacionXmlConfig();
 
 	    	//carga propiedades del archivo
-			xmlConfig = (AplicacionXmlConfig) xmlUtil.xmlFileToObject(new File(ARCHIVO_CONFIGURACION), AplicacionXmlConfig.class);
+			xmlConfig = (AplicacionXmlConfig) XmlUtil.xmlFileToObject(new File(ARCHIVO_CONFIGURACION), AplicacionXmlConfig.class);
 
 		}else{
 			System.out.println("El Archivo no Existe, se creará automaticamente.");
@@ -62,9 +62,7 @@ public class ConfiguracionApp {
 		}
 		
 		File file = new File(ARCHIVO_CONFIGURACION);
-		xmlUtil.convertToXmlFile(file, aplicacion, AplicacionXmlConfig.class);
-		
-		System.out.println("Archivo Creado con Exito");
+		XmlUtil.convertToXmlFile(file, aplicacion, AplicacionXmlConfig.class);
 	}
 
 

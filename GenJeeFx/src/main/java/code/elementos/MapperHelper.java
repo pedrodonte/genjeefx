@@ -14,10 +14,17 @@ public class MapperHelper extends CodigoFuente {
 	protected Object[] prepararParametros(
 			SemillaCodigoFuente semillaCodigoFuente) {
 		Object[] parametros = { 
-				semillaCodigoFuente.getPaqueteClase(),
+				semillaCodigoFuente.getPaqueteMapper(),
 				semillaCodigoFuente.getImports(),
-				semillaCodigoFuente.getMetodos() };
+				semillaCodigoFuente.getMetodosMapper(),
+				semillaCodigoFuente.getClaseMapper()
+				};
 		return parametros;
+	}
+
+	@Override
+	public String getPath(SemillaCodigoFuente seed) {
+		return seed.getFullMapper();
 	}
 
 }

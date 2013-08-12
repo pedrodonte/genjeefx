@@ -46,38 +46,6 @@ public class Atributo extends ElementoBase implements Cloneable{
 		this.tipo = tipo;
 	}
 	
-	
-	
-	public static void main(String[] args) {
-//		serialVersionUID
-//		long
-//		archivoadjuntoCod
-//		long
-//		descripcion
-//		class java.lang.String
-//		nombreArchivo
-//		class java.lang.String
-//		regFechaInsert
-//		class java.sql.Timestamp
-//		regFechaUpdate
-//		class java.sql.Timestamp
-//		baseTabArchivoadjuntocomentarios
-//		interface java.util.Set
-		
-		String bla = "class java.lang.String";
-		
-		String origen = bla.split(" ")[0];
-		
-		String tipo = bla.split(" ")[1];
-		
-		System.out.println( (origen.equals("interface")? "Interface" : (origen.equals("class") ?"Clase":"Primitivo")));
-		
-		System.out.println(tipo);
-		System.out.println(tipo.lastIndexOf("."));
-		System.out.println(tipo.substring(tipo.lastIndexOf(".")+1, tipo.length()));
-		System.out.println(tipo.substring(0, tipo.lastIndexOf(".")));
-	}
-
 	@Override
 	public String toString() {
 		return "Atributo [tipo=" + tipo.toString2() + ", getNombre()=" + getNombre() + "]";

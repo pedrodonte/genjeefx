@@ -12,8 +12,7 @@ public class CrudServiceEJBImpl extends CodigoFuente {
 	}
 
 	@Override
-	protected Object[] prepararParametros(
-			SemillaCodigoFuente s) {
+	protected Object[] prepararParametros(SemillaCodigoFuente s) {
 		Object[] parametros = {
 				s.getPaqueteImpl(),//0
 				s.getFullDao(),//1
@@ -24,10 +23,19 @@ public class CrudServiceEJBImpl extends CodigoFuente {
 				s.getClaseDAO(),//6
 				s.getInstanciaDAO(),//7
 				s.getClaseVO(),//8
-				Constantes.PAQUETE_EXCEPCIONES//9
+				Constantes.PAQUETE_EXCEPCIONES,//9
+				s.getClaseDTO(),//10
+				s.getFullMapper(),//11
+				s.getClaseMapper(),//12
+				s.getInstanciaMapper()//13
 		};
 		
 		return parametros;
+	}
+
+	@Override
+	public String getPath(SemillaCodigoFuente seed) {
+		return seed.getFullEjbImpl();
 	}
 
 }

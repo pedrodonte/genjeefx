@@ -39,18 +39,4 @@ public class BuscaGetterSetterParaVOs {
 		return codigoEncapsulacion.toString();
 	}
 	
-	public static void main(String[] args) {
-		Atributo a2 = new Atributo();
-		a2.setNombre("fecha");
-		a2.getTipo().setNombre("Date");
-		a2.getTipo().setPaquete("java.util");
-		Atributo a3 = new Atributo();
-		a3.setNombre("edad");
-		a3.getTipo().setNombre("int");
-		a3.getTipo().setEsPrimitivo(true);
-		
-		System.out.println(getSetterGetter(a2));
-		System.out.println(getSetterGetter(a3));
-	}
-
 }

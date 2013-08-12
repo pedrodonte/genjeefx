@@ -1,209 +1,252 @@
 package code;
 
-import generar.engine.GeneraCodigoAtributosParaVOs;
+import generar.Constantes;
 import generar.engine.BuscaGetterSetterParaVOs;
 import generar.engine.BuscaImportsParaVOs;
+import generar.engine.GeneraCodigoAtributosParaVOs;
+import generar.engine.GeneraCodigoDesdePatron;
 import generar.engine.GeneraMapper;
-import generar.engine.GenerarVO;
 import generar.modelo.Atributo;
-import generar.modelo.CrudService;
 import generar.modelo.Entidad;
 import generar.modelo.Proyecto;
+
 import code.elementos.ControllerMBCodigoFuente;
 import code.elementos.CrudServiceEJB;
 import code.elementos.CrudServiceEJBImpl;
 import code.elementos.DataAccessObject;
+import code.elementos.MantenedorXHtml;
 import code.elementos.MapperHelper;
-import code.elementos.MapperMetodos;
 import code.elementos.ValueObject;
 
 public class CodigoFactory {
 
-	public static String generarVO(Proyecto proyecto, Entidad entidad) {
+	public enum Elementos {
+		DAO, VO, EJB, EJB_IMPL, MBEAN, XHTML, MAPPER
+	}
+
+	private static String generarVO(Proyecto proyecto, Entidad entidad) {
 		try {
-			SemillaCodigoFuente seed = inicializarSemilla(proyecto, entidad);
-			seed.setPathDirectorioSalida(proyecto.getCarpetaSalida());
-			seed.setPaqueteClase(proyecto.getPaqueteVos());
-			seed.setNombreClase(entidad.getVo().getNombre());
+			SemillaCodigoFuente seed = inicializarSemilla(proyecto);
+			seed = prepararSemilla(seed, entidad);
 			seed.setImports(BuscaImportsParaVOs.getImports(entidad.getVo()
 					.getAtributos()));
-			seed.setAtributos(GeneraCodigoAtributosParaVOs.getAtributosPrivate(entidad
-					.getVo().getAtributos()));
+			seed.setAtributos(GeneraCodigoAtributosParaVOs
+					.getAtributosPrivate(entidad.getVo().getAtributos()));
 			seed.setGetterSetters(BuscaGetterSetterParaVOs
 					.getTodosSetterGetter(entidad.getVo().getAtributos()));
 
 			CodigoFuente sourceCode = new ValueObject();
-			
-			seed.setPathArchivoFuente(proyecto.getCarpetaSalida()+"/"+entidad.getVo().getFuturoPath());
 			sourceCode.generarArchivoFuente(seed);
 
 			return sourceCode.getCodigoFuente();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return e.getMessage();
 		}
 	}
 
-	public static String generarDAO(Proyecto proyecto, Entidad entidad) {
+	private static String generarDAO(Proyecto proyecto, Entidad entidad) {
 		try {
-			SemillaCodigoFuente seed = inicializarSemilla(proyecto, entidad);
-
-			seed.setPathDirectorioSalida(proyecto.getCarpetaSalida());
-			seed.setPaqueteClase(proyecto.getPaqueteDaos());
-			seed.setNombreClase(entidad.getDao().getNombre());
-			seed.setNombreClaseAux(entidad.getNombre());
-			seed.setPaqueteClaseAux(proyecto.getPaqueteEntrada());
-
+			SemillaCodigoFuente seed = inicializarSemilla(proyecto);
+			seed = prepararSemilla(seed, entidad);
 			CodigoFuente sourceCode = new DataAccessObject();
-			seed.setPathArchivoFuente(proyecto.getCarpetaSalida()+"/"+entidad.getDao().getFuturoPath());
 			sourceCode.generarArchivoFuente(seed);
-
 			return sourceCode.getCodigoFuente();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return e.getMessage();
 		}
 	}
 
-	private static SemillaCodigoFuente inicializarSemilla(Proyecto proyecto,
-			Entidad entidad) {
-		SemillaCodigoFuente seed = new SemillaCodigoFuente();
-		seed.setCreaArchivo(false);
-		seed.setPathDirectorioSalida(proyecto.getCarpetaSalida());		
-		seed.setPaqueteMB(proyecto.getPaqueteJsfController());
-		seed.setPaqueteImpl(proyecto.getPaqueteCrudService());
-		seed.setPaqueteEJB(proyecto.getPaqueteCrudService());
-		seed.setPaqueteDAO(proyecto.getPaqueteDaos());
-		seed.setPaqueteVO(proyecto.getPaqueteVos());
-		seed.setPaqueteDTO(proyecto.getPaqueteEntrada());
-		return seed;
-	}
-
-	public static String generarMapperMetodo(Proyecto proyecto, Entidad entidad) {
+	private static String generarMapperMetodo(Proyecto proyecto, Entidad entidad) {
 		try {
-			SemillaCodigoFuente seed = inicializarSemilla(proyecto, entidad);
+			Object[] parametros = { entidad.getVo().getNombre(),
+					entidad.getNombre(),
+					GeneraMapper.atributosToVO(entidad, proyecto),
+					GeneraMapper.atributosToDTO(entidad, proyecto) };
 
-			String Vo = entidad.getVo().getNombre();
-			String Dto = entidad.getNombre();
-			String settVo = GeneraMapper.atributosToVO(entidad, proyecto);
-			String settDto = GeneraMapper.atributosToDTO(entidad, proyecto);
-
-			seed.setNombreClase(Vo);
-			seed.setNombreClaseAux(Dto);
-			seed.setAtributos(settVo);
-			seed.setAtributosAux(settDto);
-
-			CodigoFuente sourceCode = new MapperMetodos();
-			sourceCode.generarArchivoFuente(seed);
-
-			return sourceCode.getCodigoFuente();
+			return GeneraCodigoDesdePatron.build(parametros,
+					PatronesCodigoFuente.MAPPER_METODOS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return e.getMessage();
 		}
 	}
 
-	public static String generarMapperHelper(Proyecto proyecto) {
+	private static String generarMapperHelper(Proyecto proyecto) {
 		try {
-			proyecto.print();
+
 			StringBuilder imports = new StringBuilder();
 			StringBuilder metodos = new StringBuilder();
 
-			GenerarVO generarVO = new GenerarVO(proyecto);
-
 			for (Entidad entidad : proyecto.getEntidades()) {
-
-				for (Atributo atrEntidadActual : entidad.getAtributos()) {
-					if (!atrEntidadActual.getTipo().isEsInterface()) {
-						if (!atrEntidadActual.getNombre()
-								.equals("serialVersionUID")) {
-							Atributo atributoVO = generarVO
-									.getDeficinionAtributoVO(atrEntidadActual);
-							entidad.getMapeoAtributosVoDto().put(atributoVO,
-									atrEntidadActual);
-						}
-					}
-				}
-
-				imports.append("import " + proyecto.getPaqueteEntrada() + "."
-						+ entidad.getNombre() + ";\n");
+				imports.append("import " + entidad.getNombreCompleto() + ";\n");
 				metodos.append(generarMapperMetodo(proyecto, entidad));
 			}
 
-			SemillaCodigoFuente seed = new SemillaCodigoFuente();
+			SemillaCodigoFuente seed = inicializarSemilla(proyecto);
 			seed.setImports(imports.toString());
-			seed.setPaqueteClase(proyecto.getPaqueteVos());
-			seed.setMetodos(metodos.toString());
+			seed.setMetodosMapper(metodos.toString());
+			seed.setClaseMapper(Constantes.CLASE_MAPPER);
+			System.out.println("setMetodosMapper  " + metodos.toString());
 
 			CodigoFuente sourceCode = new MapperHelper();
-			seed.setPathArchivoFuente(proyecto.getCarpetaSalida()+"/"+proyecto.getPaqueteVos()+"/HelperToVo");
 			sourceCode.generarArchivoFuente(seed);
 
 			return sourceCode.getCodigoFuente();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return e.getMessage();
 		}
 	}
 
-	public static String generarCrudEJB(Proyecto proyecto, Entidad entidad) {
+	private static String generarCrudEJB(Proyecto proyecto, Entidad entidad) {
 
 		try {
-			CrudService crudService = new CrudService(entidad.getVo());
-			entidad.setCrudService(crudService);
-			SemillaCodigoFuente s = inicializarSemilla(proyecto, entidad);
-			s.setClaseImpl(entidad.getCrudService().getCrudImplement().getNombre());
-			s.setClaseEJB(entidad.getCrudService().getCrudInterface().getNombre());
-			s.setClaseDAO(entidad.getDao().getNombre());
-			s.setClaseVO(entidad.getVo().getNombre());
-			s.setClaseDTO(entidad.getNombre());
-			s.setClaseMB(entidad.getControllerMB().getNombre());
-			
+			SemillaCodigoFuente seed = inicializarSemilla(proyecto);
+			seed = prepararSemilla(seed, entidad);
 			CodigoFuente sourceCode = new CrudServiceEJB();
-			s.setPathArchivoFuente(proyecto.getCarpetaSalida()+"/"+entidad.getCrudService().getCrudInterface().getFuturoPath());
-			sourceCode.generarArchivoFuente(s);
-
+			sourceCode.generarArchivoFuente(seed);
 			return sourceCode.getCodigoFuente();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return e.getMessage();
 		}
 	}
 
-	public static String generarCrudEJBImpl(Proyecto proyecto, Entidad entidad) {
+	private static String generarCrudEJBImpl(Proyecto proyecto, Entidad entidad) {
 		try {
-			SemillaCodigoFuente s = inicializarSemilla(proyecto, entidad);
-			s.setClaseImpl(entidad.getCrudService().getCrudImplement().getNombre());
-			s.setClaseEJB(entidad.getCrudService().getCrudInterface().getNombre());
-			s.setClaseDAO(entidad.getDao().getNombre());
-			s.setClaseVO(entidad.getVo().getNombre());
-			s.setClaseDTO(entidad.getNombre());
-			s.setClaseMB(entidad.getControllerMB().getNombre());
-
+			SemillaCodigoFuente seed = inicializarSemilla(proyecto);
+			seed = prepararSemilla(seed, entidad);
 			CodigoFuente sourceCode = new CrudServiceEJBImpl();
-			s.setPathArchivoFuente(proyecto.getCarpetaSalida()+"/"+entidad.getCrudService().getCrudImplement().getFuturoPath());
-			sourceCode.generarArchivoFuente(s);
-
+			sourceCode.generarArchivoFuente(seed);
 			return sourceCode.getCodigoFuente();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return e.getMessage();
 		}
 	}
 
-	public static String generarController(Proyecto proyecto,
-			Entidad entidad){
+	private static String generarController(Proyecto proyecto, Entidad entidad) {
 		try {
-			SemillaCodigoFuente s = inicializarSemilla(proyecto, entidad);
-			s.setClaseImpl(entidad.getCrudService().getCrudImplement().getNombre());
-			s.setClaseEJB(entidad.getCrudService().getCrudInterface().getNombre());
-			s.setClaseDAO(entidad.getDao().getNombre());
-			s.setClaseVO(entidad.getVo().getNombre());
-			s.setClaseDTO(entidad.getNombre());
-			s.setClaseMB(entidad.getControllerMB().getNombre());
-			
+			SemillaCodigoFuente seed = inicializarSemilla(proyecto);
+			seed = prepararSemilla(seed, entidad);
+
 			CodigoFuente sourceCode = new ControllerMBCodigoFuente();
-			s.setPathArchivoFuente(proyecto.getCarpetaSalida()+"/"+entidad.getControllerMB().getFuturoPath());
-			sourceCode.generarArchivoFuente(s);
+			sourceCode.generarArchivoFuente(seed);
 
 			return sourceCode.getCodigoFuente();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return e.getMessage();
 		}
+	}
+
+	private static String generarMantenedorXhtml(Proyecto proyecto,
+			Entidad entidad) {
+		try {
+			SemillaCodigoFuente seed = inicializarSemilla(proyecto);
+			seed = prepararSemilla(seed, entidad);
+			StringBuilder camposFormulario = new StringBuilder();
+			StringBuilder camposTabla = new StringBuilder();
+
+			for (Atributo atri : entidad.getVo().getAtributos()) {
+				Object[] param = { atri.getNombre(), seed.getInstanciaMB() };
+				camposFormulario.append(GeneraCodigoDesdePatron.build(param,
+						PatronesCodigoFuente.JSF_MANT_FORM_CPO));
+				camposTabla.append(GeneraCodigoDesdePatron.build(param,
+						PatronesCodigoFuente.JSF_MANT_TABLA_CPO));
+			}
+
+			seed.setCamposFormulario(camposFormulario.toString());
+			seed.setCamposTabla(camposTabla.toString());
+			seed.setRowKey(entidad.getVo().getAtributos().get(0).getNombre());
+			seed.setTituloFormulario(entidad.getNombre());
+			seed.setExtension(Constantes.XHTML);
+
+			CodigoFuente sourceCode = new MantenedorXHtml();
+			sourceCode.generarArchivoFuente(seed);
+
+			return sourceCode.getCodigoFuente();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+
+	public static void generarFuente(Proyecto proyecto, Entidad entidad,
+			Elementos elemento) {
+		
+		switch (elemento) {
+		
+		case VO:
+			generarVO(proyecto, entidad);
+			break;
+
+		case DAO:
+			generarDAO(proyecto, entidad);
+			break;
+
+		case EJB:
+			generarCrudEJB(proyecto, entidad);
+			break;
+
+		case EJB_IMPL:
+			generarCrudEJBImpl(proyecto, entidad);
+			break;
+
+		case MAPPER:
+			generarMapperHelper(proyecto);
+			break;
+
+		case MBEAN:
+			generarController(proyecto, entidad);
+			break;
+
+		case XHTML:
+			generarMantenedorXhtml(proyecto, entidad);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	private static SemillaCodigoFuente inicializarSemilla(Proyecto proyecto) {
+		SemillaCodigoFuente seed = new SemillaCodigoFuente();
+		try {
+			seed.setCreaArchivo(true);
+			seed.setPathDirectorioSalida(proyecto.getCarpetaSalida());
+			seed.setPaqueteMB(proyecto.getPaqueteJsfController());
+			seed.setPaqueteImpl(proyecto.getPaqueteCrudService());
+			seed.setPaqueteEJB(proyecto.getPaqueteCrudService());
+			seed.setPaqueteDAO(proyecto.getPaqueteDaos());
+			seed.setPaqueteVO(proyecto.getPaqueteVos());
+			seed.setPaqueteDTO(proyecto.getPaqueteEntrada());
+			seed.setPaqueteMapper(proyecto.getPaqueteVos());
+			seed.setPathDirectorioSalida(proyecto.getCarpetaSalida());
+			seed.setWebContent(proyecto.getWebContent());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return seed;
+	}
+
+	private static SemillaCodigoFuente prepararSemilla(
+			SemillaCodigoFuente seed, Entidad entidad) {
+		try {
+			seed.setClaseImpl(entidad.getCrudService().getNombreEJBImpl());
+			seed.setClaseEJB(entidad.getCrudService().getNombreEJB());
+			seed.setClaseDAO(entidad.getDao().getNombre());
+			seed.setClaseVO(entidad.getVo().getNombre());
+			seed.setClaseDTO(entidad.getNombre());
+			seed.setClaseMB(entidad.getControllerMB().getNombre());
+			seed.setClaseMapper(Constantes.CLASE_MAPPER);
+			seed.setExtension(Constantes.JAVA);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return seed;
 	}
 
 }

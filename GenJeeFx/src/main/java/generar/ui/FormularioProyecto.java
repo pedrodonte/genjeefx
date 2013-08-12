@@ -38,6 +38,9 @@ public class FormularioProyecto extends GridPane {
 
 	Label lblPrefijos = new Label("Prefijos Entidades:");
 	TextField cpoPrefijos = new TextField();
+	
+	Label lblWebContent = new Label("Web Content:");
+	TextField cpoWebContent = new TextField();
 
 	Button btnSeleccionaOutput = new Button("Selecionar");
 
@@ -70,6 +73,9 @@ public class FormularioProyecto extends GridPane {
 		add(lblPakgJsfController, 0, 7);
 		add(cpoPakgJsfController, 1, 7);
 		
+		add(lblWebContent, 0, 8);
+		add(cpoWebContent, 1, 8);
+		
 		btnSeleccionaOutput.setOnAction(ehSeleccionarOutput);
 
 		cpoProyecto.setMinWidth(400);
@@ -87,6 +93,7 @@ public class FormularioProyecto extends GridPane {
 		aplicarEstiloCampo(cpoPakgVo);
 		aplicarEstiloCampo(cpoPrefijos);
 		aplicarEstiloCampo(cpoProyecto);
+		aplicarEstiloCampo(cpoWebContent);
 	}
 
 	private void aplicarEstiloCampo(TextField cpo) {
@@ -101,9 +108,7 @@ public class FormularioProyecto extends GridPane {
 			directoryChooser.setTitle("Selecciona Carpeta para Output");
 			File file = directoryChooser.showDialog(null);
 			if (file != null) {
-				System.out.println(file.getPath());
 				proyecto.setCarpetaSalida(file.getPath());
-				// formularioProyecto.setDatos(proyecto);
 				cpoOutput.setText(proyecto.getCarpetaSalida());
 			}
 
@@ -120,6 +125,7 @@ public class FormularioProyecto extends GridPane {
 		cpoPakgJsfController.setText(proyecto.getPaqueteJsfController());
 		cpoOutput.setText(proyecto.getCarpetaSalida());
 		cpoPrefijos.setText(proyecto.getPrefijosEntidades());
+		cpoWebContent.setText(proyecto.getWebContent());
 	}
 
 	public Proyecto getDatos() {
@@ -133,6 +139,7 @@ public class FormularioProyecto extends GridPane {
 		proyecto.setPaqueteJsfController(cpoPakgJsfController.getText());
 		proyecto.setCarpetaSalida(cpoOutput.getText());
 		proyecto.setPrefijosEntidades(cpoPrefijos.getText());
+		proyecto.setWebContent(cpoWebContent.getText());
 		return proyecto;
 	}
 

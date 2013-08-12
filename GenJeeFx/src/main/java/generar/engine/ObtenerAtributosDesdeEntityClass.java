@@ -15,8 +15,6 @@ public class ObtenerAtributosDesdeEntityClass {
 			
 			List<Atributo> atributos = new ArrayList<>();
 			for (Field f : clase.getDeclaredFields()) {
-				System.out.println(f.getName());
-				System.out.println(f.getType());
 				atributos.add(new Atributo(f));
 			}
 			

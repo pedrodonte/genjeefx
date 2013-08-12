@@ -16,6 +16,10 @@ public class Constantes {
 	public static final String NL = "\n";
 	public static final String SLASH = "/";
 	public static final String JAVA = ".java";
+	public static final String XHTML = ".xhtml";
 	public static final Exception EX_NO_IMPLEMENTADA = new OperationNotSupportedException("Aun no se implementa esta funcionalidad");
+	public static final String CLASE_MAPPER = "HelperMapper";
+	
+	public static final String XHTML_EOF = "<<<*EOF*>>>";
 
 }

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" template="plantilla-bootstrap.xhtml">
+
+	<ui:define name="content">
+
+		<script type="text/javascript">
+			function handleActionRequest(xhr, status, args) [
+				if (args.codExitoOperacion) [
+					dialogoEditor.hide();
+				]
+			]
+		</script>
+
+		<h:form id="MatenedorForm">
+			<p:growl id="msg" autoUpdate="true" showDetail="true"
+				showSummary="true" />
+
+			<p:panelGrid columns="1" style="width:100%;" id="datos">
+
+				<p:dataTable id="tablaRegistros" value="#[{0}.registros]"
+					var="item" styleClass="tablaRegistros"
+					rowKey="#[item.{4}]" selectionMode="single"
+					selection="#[{0}.registroSeleccionado]" rows="20"
+					paginator="true">
+
+					<p:ajax event="rowSelect" update="@this" />
+
+					<f:facet name="header">
+
+						<p:commandButton value="Ver" process="@this"
+							disabled="#[{0}.registroSeleccionado eq null]"
+							oncomplete="dialogoEditor.show()"
+							update=":MatenedorForm:formularioEdicionRegistro"
+							actionListener="#[{0}.doVerRegistroFormulario]" />
+
+						<p:commandButton value="Editar" process="@this"
+							disabled="#[{0}.registroSeleccionado eq null]"
+							oncomplete="dialogoEditor.show()"
+							update=":MatenedorForm:formularioEdicionRegistro"
+							actionListener="#[{0}.doEditarRegistroFormulario]" />
+
+						<p:commandButton value="Nuevo" process="@this"
+							oncomplete="dialogoEditor.show()"
+							update=":MatenedorForm:formularioEdicionRegistro"
+							actionListener="#[{0}.doNuevoRegistroFormulario]" />
+
+					</f:facet>
+
+{2}
+
+				</p:dataTable>
+			</p:panelGrid>
+
+
+
+			<p:dialog id="editorRegistroDlg" header="Detalle del Registro"
+				widgetVar="dialogoEditor" resizable="false" modal="true">
+
+				<p:growl autoUpdate="true" showDetail="true" showSummary="true" />
+
+				<p:panelGrid columns="1" id="formularioEdicionRegistro"
+					styleClass="registro-formulario">
+					<h:outputText value="(*) Campos Obligatorios"
+						rendered="#[{0}.modoFormulario ne ''OFF'']" />
+					<h:outputText value="modo:#[{0}.modoFormulario]" />
+					<p:panelGrid columns="2">
+
+						<f:facet name="header">{1}</f:facet>
+
+{3}
+
+					</p:panelGrid>
+
+					<f:facet name="footer">
+
+						<p:commandButton id="btncancel" value="Cancelar"
+							update="@(.tablaRegistros)" oncomplete="dialogoEditor.hide();"
+							actionListener="#[{0}.doCancelarRegistroFormulario]"
+							process="@none"
+							rendered="#[{0}.modoFormulario ne ''OFF'']" />
+
+						<p:commandButton id="btnsave" value="Guardar"
+							update="@(.tablaRegistros, .registro-formulario)"
+							actionListener="#[{0}.doGuardarRegistroFormulario]"
+							oncomplete="handleActionRequest(xhr, status, args);"
+							rendered="#[{0}.modoFormulario ne ''OFF'']" />
+
+						<p:commandButton id="btnedit" value="Habilitar Edición"
+							actionListener="#[{0}.doHabilitarEdicion]"
+							update="@(.registro-formulario)"
+							rendered="#[{0}.modoFormulario eq ''OFF'']" />
+					</f:facet>
+
+				</p:panelGrid>
+
+
+
+			</p:dialog>
+
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>
+
+<<<*EOF*>>>
+0:MBean
+1:Titulo FOrmulario
+2:campos tabla
+3:campos formulario
+4:row key

@@ -22,4 +22,9 @@ public class CrudServiceEJB extends CodigoFuente {
 		return testArgs;
 	}
 
+	@Override
+	public String getPath(SemillaCodigoFuente seed) {
+		return seed.getFullEjb();
+	}
+
 }

@@ -19,6 +19,8 @@ public class Proyecto extends ElementoBase{
 	private String paqueteDaos;
 	private String paqueteCrudService;
 	private String paqueteJsfController;
+	
+	private String webContent;
 
 	public List<Entidad> getEntidades() {
 		return entidades;
@@ -79,6 +81,12 @@ public class Proyecto extends ElementoBase{
 			System.out.println(TAB+TAB+"tVo "+e.getVo().getNombre());
 			System.out.println(TAB+TAB+"Atributos "+e.getVo().getAtributos().size());
 		}
+	}
+	public String getWebContent() {
+		return webContent;
+	}
+	public void setWebContent(String webContent) {
+		this.webContent = webContent;
 	}
 	
 }

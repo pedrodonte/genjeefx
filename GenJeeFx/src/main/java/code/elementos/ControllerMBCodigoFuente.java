@@ -24,4 +24,9 @@ public class ControllerMBCodigoFuente extends CodigoFuente{
 		return parametros;
 	}
 
+	@Override
+	public String getPath(SemillaCodigoFuente seed) {
+		return seed.getFullControllerMB();
+	}
+
 }

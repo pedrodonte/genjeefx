@@ -14,11 +14,16 @@ public class DataAccessObject extends CodigoFuente {
 	protected Object[] prepararParametros(SemillaCodigoFuente seed) {
 		
 		Object[] parametros = { 
-				seed.getPaqueteClase(), 	//0
-				seed.getPaqueteClaseAux(),	//1
-				seed.getNombreClase(),		//2
-				seed.getNombreClaseAux()};	//3
+				seed.getPaqueteDAO(), 	//0
+				seed.getPaqueteDTO(),	//1
+				seed.getClaseDAO(),		//2
+				seed.getClaseDTO()};	//3
 		return parametros;
+	}
+
+	@Override
+	public String getPath(SemillaCodigoFuente seed) {
+		return seed.getFullDao();
 	}
 
 }

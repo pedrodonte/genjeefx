@@ -24,7 +24,7 @@ public class GeneraMapper {
 		Atributo aVo = mapeoAtributo.getKey();
 		Atributo aDto = mapeoAtributo.getValue();
 		
-		boolean esEntidad = esEntidad(proyecto, aDto);
+		boolean esEntidad = esEntidad(proyecto.getPaqueteEntrada(), aDto);
 		MessageFormat messageFormat;
 		String[] nombres = {StringHelper.toCamelMayuscula(aVo.getNombre()),StringHelper.toCamelMayuscula(aDto.getNombre())};
 		
@@ -40,7 +40,7 @@ public class GeneraMapper {
 		Atributo aVo = mapeoAtributo.getKey();
 		Atributo aDto = mapeoAtributo.getValue();
 		
-		boolean esEntidad = esEntidad(proyecto, aDto);
+		boolean esEntidad = esEntidad(proyecto.getPaqueteEntrada(), aDto);
 		MessageFormat messageFormat;
 		String[] nombres = {StringHelper.toCamelMayuscula(aVo.getNombre()),StringHelper.toCamelMayuscula(aDto.getNombre())};
 		
@@ -57,9 +57,9 @@ public class GeneraMapper {
 	 * @param aDto
 	 * @return 
 	 */
-	private static boolean esEntidad(Proyecto proyecto, Atributo aDto) {
+	private static boolean esEntidad(String packageEntidades, Atributo aDto) {
 		if (!aDto.getTipo().isEsPrimitivo()) {
-			if (aDto.getTipo().getPaquete().equals(proyecto.getPaqueteEntrada())) {
+			if (aDto.getTipo().getPaquete().equals(packageEntidades)) {
 				return true;
 			}
 		}

@@ -35,7 +35,6 @@ public class AtributosTableView extends TableView<Atributo> {
 
 	public void addAtributo(Atributo atributo) {
 		data.add(atributo);
-		System.out.println(atributo);
 	}
 
 	public void vaciarTabla() {

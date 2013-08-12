@@ -1,0 +1,6 @@
+					<p:column sortBy="#[item.{0}]">
+						<f:facet name="header">
+							<h:outputText value="{0}" />
+						</f:facet>
+						<h:outputText value="#[item.{0}]" />
+					</p:column>

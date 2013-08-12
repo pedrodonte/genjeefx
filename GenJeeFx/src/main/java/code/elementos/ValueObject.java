@@ -14,13 +14,19 @@ public class ValueObject extends CodigoFuente {
 	protected Object[] prepararParametros(SemillaCodigoFuente seed) {
 		
 		Object[] parametros = { 
-				seed.getPaqueteClase(),
-				seed.getNombreClase(),
+				seed.getPaqueteVO(),
+				seed.getClaseVO(),
 				seed.getImports(),
 				seed.getAtributos(), 
-				seed.getGetterSetters() };
+				seed.getGetterSetters() 
+		};
 
 		return parametros;
+	}
+
+	@Override
+	public String getPath(SemillaCodigoFuente seed) {
+		return seed.getFullVo();
 	}
 
 }

@@ -15,7 +15,9 @@ public abstract class JeeEventHandler<T> implements EventHandler<ActionEvent> {
 	@Override
 	public void handle(ActionEvent event) {
 		objeto = manejaEvento();
-		jeeActionListener.ejecutarJeeAction(objeto);
+		if (jeeActionListener.condicionanteEjecucion()) {
+			jeeActionListener.ejecutarJeeAction(objeto);
+		}
 	}
 
 	protected abstract T manejaEvento();

@@ -1,5 +1,6 @@
 package code.elementos;
 
+import util.HelperNombres;
 import generar.Constantes;
 import code.CodigoFuente;
 import code.PatronesCodigoFuente;
@@ -14,7 +15,7 @@ public class MantenedorXHtml extends CodigoFuente {
 
 	@Override
 	public String getPath(SemillaCodigoFuente seed) {
-		return seed.getWebContent()+"/"+(seed.getClaseVO().replace(Constantes.PREFIJO_VO, "mant_")).toLowerCase();
+		return seed.getWebContent()+"/"+HelperNombres.nombreMantenedorXHTML(seed.getClaseVO());
 	}
 
 	@Override

@@ -58,5 +58,12 @@ public class {4} implements {5} [ //EJB EJBImpl
 		
 		return registros;
 	]
+	
+	@Override
+	public {8} obtenerRegistroPorID(long id)
+			throws ErrorDelSistemaException, RegistrosNoEncontradosException [
+		{10} dto = {7}.find(id);
+		return helperMapper.toVO(dto);
+	]
 
 ]

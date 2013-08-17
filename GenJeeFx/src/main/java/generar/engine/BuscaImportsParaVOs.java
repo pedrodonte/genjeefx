@@ -8,6 +8,13 @@ import generar.modelo.Atributo;
 
 public class BuscaImportsParaVOs {
 
+	
+	/**Generar bloque de Imports para la clase VO,
+	 * en base a todos los posibles atributos que se tengan,
+	 * debe eliminar los repetidos.
+	 * @param lista de atributos
+	 * @return cadena con la sentencia que hace el import.
+	 */
 	public static String getImports(List<Atributo> atributos) {
 
 		Set<String> tiposUnicos = new HashSet<>();

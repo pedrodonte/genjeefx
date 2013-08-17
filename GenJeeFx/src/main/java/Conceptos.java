@@ -19,19 +19,16 @@ public class Conceptos {
 				"personasMBean",
 				"Personas",
 				GeneraCodigoDesdePatron.build(param, PatronesCodigoFuente.JSF_MANT_TABLA_CPO),
-				GeneraCodigoDesdePatron.build(param, PatronesCodigoFuente.JSF_MANT_FORM_CPO),
+				GeneraCodigoDesdePatron.build(param, PatronesCodigoFuente.JSF_MANT_CPO_TEXTO),
 				"personaCod"
 				
 			};
 		
 		System.out.println(GeneraCodigoDesdePatron.build(param1, PatronesCodigoFuente.JSF_MANT));
 		
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-							
-			}
-		});
+		
+		
+	
 	}
 
 

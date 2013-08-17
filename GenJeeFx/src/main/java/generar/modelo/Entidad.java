@@ -96,4 +96,14 @@ public class Entidad extends ElementoBase {
 		this.controllerMB = controllerMB;
 	}
 
+	@Override
+	public String toString() {
+		return "Entidad [dao=" + dao + ", vo=" + vo + ", crudService="
+				+ crudService + ", controllerMB=" + controllerMB
+				+ ", mapeoAtributosVoDto=" + mapeoAtributosVoDto + ", archivo="
+				+ archivo + ", atributos=" + atributos + "]";
+	}
+	
+	
+	
 }

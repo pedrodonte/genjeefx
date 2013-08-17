@@ -2,6 +2,8 @@ package code;
 
 import java.util.Date;
 
+import util.HelperNombres;
+import util.StringHelper;
 import generar.Constantes;
 import generar.engine.BuscaGetterSetterParaVOs;
 import generar.engine.BuscaImportsParaVOs;
@@ -15,6 +17,7 @@ import code.elementos.ControllerMBCodigoFuente;
 import code.elementos.CrudServiceEJB;
 import code.elementos.CrudServiceEJBImpl;
 import code.elementos.DataAccessObject;
+import code.elementos.JSFConverterCodigoFuente;
 import code.elementos.MantenedorXHtml;
 import code.elementos.MapperHelper;
 import code.elementos.ValueObject;
@@ -22,7 +25,7 @@ import code.elementos.ValueObject;
 public class CodigoFactory {
 
 	public enum Elementos {
-		DAO, VO, EJB, EJB_IMPL, MBEAN, XHTML, MAPPER
+		DAO, VO, EJB, EJB_IMPL, MBEAN, XHTML, MAPPER, CONVERTER_JSF
 	}
 
 	private static String generarVO(Proyecto proyecto, Entidad entidad) {
@@ -89,6 +92,7 @@ public class CodigoFactory {
 			seed.setImports(imports.toString());
 			seed.setMetodosMapper(metodos.toString());
 			seed.setClaseMapper(Constantes.CLASE_MAPPER);
+			seed.setExtension(Constantes.JAVA);
 
 			CodigoFuente sourceCode = new MapperHelper();
 			sourceCode.generarArchivoFuente(seed);
@@ -152,10 +156,60 @@ public class CodigoFactory {
 
 			for (Atributo atri : entidad.getVo().getAtributos()) {
 				Object[] param = { atri.getNombre(), seed.getInstanciaMB() };
-				camposFormulario.append(GeneraCodigoDesdePatron.build(param,
-						PatronesCodigoFuente.JSF_MANT_FORM_CPO));
+				
 				camposTabla.append(GeneraCodigoDesdePatron.build(param,
 						PatronesCodigoFuente.JSF_MANT_TABLA_CPO));
+				
+				if (atri.getNombre().startsWith("regFecha") || atri.getNombre().endsWith("Id")) continue;
+				
+				if (atri.getTipoCampoFormulario() == null) {
+					System.out.println(atri);
+					continue;
+				}
+
+				switch (atri.getTipoCampoFormulario()) {
+				case Texto:
+					camposFormulario.append(GeneraCodigoDesdePatron.build(
+							param, PatronesCodigoFuente.JSF_MANT_CPO_TEXTO));
+					break;
+
+				case Numero:
+					camposFormulario.append(GeneraCodigoDesdePatron.build(
+							param, PatronesCodigoFuente.JSF_MANT_CPO_NUMER));
+					break;
+
+				case Fecha:
+					camposFormulario.append(GeneraCodigoDesdePatron.build(
+							param, PatronesCodigoFuente.JSF_MANT_CPO_FECHA));
+					break;
+					
+				case Flag:
+					camposFormulario.append(GeneraCodigoDesdePatron.build(
+							param, PatronesCodigoFuente.JSF_MANT_CPO_BOOL));
+					break;
+					
+				case VO:
+					String instanciaConverter = HelperNombres.jsfConverterFromVO(atri.getTipo().getNombre());
+					String instanciaControllerVO = HelperNombres.jsfMBeanFromVO(atri.getTipo().getNombre());
+					instanciaConverter = StringHelper.toCamelMinuscula(instanciaConverter);
+					instanciaControllerVO = StringHelper.toCamelMinuscula(instanciaControllerVO);
+					String atributoLabelVO = entidad.getVo().getAtributoLabel();
+					if (!atributoLabelVO.equals(Constantes.ATRIBUTO_LABEL)) {
+						Object[] otrosParametros = { atri.getNombre(),
+								seed.getInstanciaMB(), instanciaConverter,
+								instanciaControllerVO, atributoLabelVO };
+						camposFormulario.append(GeneraCodigoDesdePatron.build(
+								otrosParametros,
+								PatronesCodigoFuente.JSF_MANT_CPO_COMBO_VO));
+					}
+					break;
+
+				default:
+					camposFormulario.append(GeneraCodigoDesdePatron.build(
+							param, PatronesCodigoFuente.JSF_MANT_CPO_TEXTO));
+					break;
+				}
+
 			}
 
 			seed.setCamposFormulario(camposFormulario.toString());
@@ -169,6 +223,7 @@ public class CodigoFactory {
 
 			return sourceCode.getCodigoFuente();
 		} catch (Exception e) {
+			System.out.println(entidad);
 			e.printStackTrace();
 			return e.getMessage();
 		}
@@ -176,11 +231,11 @@ public class CodigoFactory {
 
 	public static void generarFuente(Proyecto proyecto, Entidad entidad,
 			Elementos elemento) {
-		
-		long t0,t1;
+
+		long t0, t1;
 		t0 = new Date().getTime();
 		switch (elemento) {
-		
+
 		case VO:
 			generarVO(proyecto, entidad);
 			break;
@@ -208,13 +263,34 @@ public class CodigoFactory {
 		case XHTML:
 			generarMantenedorXhtml(proyecto, entidad);
 			break;
+			
+		case CONVERTER_JSF:
+			generarJSFConverter(proyecto, entidad);
+			break;
 
 		default:
 			break;
 		}
-		
+
 		t1 = new Date().getTime();
-		System.out.println("\t :"+elemento.toString()+(t1-t0));
+		System.out.println("\t :" + elemento.toString() + (t1 - t0));
+	}
+
+	private static String generarJSFConverter(Proyecto proyecto, Entidad entidad) {
+		try {
+			SemillaCodigoFuente seed = inicializarSemilla(proyecto);
+			seed = prepararSemilla(seed, entidad);
+			
+			seed.setLabelVOAtributo(entidad.getVo().getAtributoLabel());
+
+			CodigoFuente sourceCode = new JSFConverterCodigoFuente();
+			sourceCode.generarArchivoFuente(seed);
+
+			return sourceCode.getCodigoFuente();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}		
 	}
 
 	private static SemillaCodigoFuente inicializarSemilla(Proyecto proyecto) {
@@ -223,6 +299,7 @@ public class CodigoFactory {
 			seed.setCreaArchivo(true);
 			seed.setPathDirectorioSalida(proyecto.getCarpetaSalida());
 			seed.setPaqueteMB(proyecto.getPaqueteJsfController());
+			seed.setPaqueteJSFConverter(proyecto.getPaqueteJSFConverter());
 			seed.setPaqueteImpl(proyecto.getPaqueteCrudService());
 			seed.setPaqueteEJB(proyecto.getPaqueteCrudService());
 			seed.setPaqueteDAO(proyecto.getPaqueteDaos());
@@ -231,6 +308,7 @@ public class CodigoFactory {
 			seed.setPaqueteMapper(proyecto.getPaqueteVos());
 			seed.setPathDirectorioSalida(proyecto.getCarpetaSalida());
 			seed.setWebContent(proyecto.getWebContent());
+			seed.setPaqueteJSFConverter(HelperNombres.paqueteSuperior(proyecto.getPaqueteJsfController()+".converters"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -246,6 +324,7 @@ public class CodigoFactory {
 			seed.setClaseVO(entidad.getVo().getNombre());
 			seed.setClaseDTO(entidad.getNombre());
 			seed.setClaseMB(entidad.getControllerMB().getNombre());
+			seed.setClaseJSFConverter(entidad.getVo().getJSFConverterName());
 			seed.setClaseMapper(Constantes.CLASE_MAPPER);
 			seed.setExtension(Constantes.JAVA);
 		} catch (Exception e) {

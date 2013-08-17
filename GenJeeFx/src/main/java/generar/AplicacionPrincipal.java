@@ -15,6 +15,7 @@ import generar.modelo.Vo;
 import generar.ui.BarraEstadoHBox;
 import generar.ui.EntidadTabPane;
 import generar.ui.FormularioProyecto;
+import generar.ui.IModificaEntidad;
 import generar.ui.TablaEntidadesDao;
 import generar.ui.util.JeeActionListener;
 import generar.ui.util.LoadEventHandler;
@@ -22,6 +23,7 @@ import generar.ui.util.SaveEventHandler;
 import generar.ui.util.SelectClassDTOEventHandler;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +43,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
@@ -50,28 +53,32 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import util.ConfiguracionApp;
+import util.HelperNombres;
 import app.modelo.AplicacionXmlConfig;
 import code.CodigoFactory.Elementos;
 
 public class AplicacionPrincipal extends Application {
 	private BorderPane root;
+	private Stage primaryStage;
 
 	private AplicacionXmlConfig conf;
+	private String pathArchivoProyecto;
 
 	private Proyecto proyecto = new Proyecto();
 	private Entidad registroSeleccionado = new Entidad();
 
 	private ObservableList<Entidad> data = FXCollections.observableArrayList();
 
-	EntidadTabPane entidadTabPane = new EntidadTabPane();
+	private EntidadTabPane entidadTabPane = new EntidadTabPane();
 	private FormularioProyecto formularioProyecto = new FormularioProyecto();
 	private TableView<Entidad> tableViewEntidades = new TablaEntidadesDao();
 	private BarraEstadoHBox barraDeEstado = new BarraEstadoHBox();
 
-	Set<TipoAtributo> tipoAtributos = new HashSet<>();
+	private Set<TipoAtributo> tipoAtributos = new HashSet<>();
 
 	JeeActionListener<File> saveActionListener = new JeeActionListener<File>() {
 		@Override
@@ -79,6 +86,14 @@ public class AplicacionPrincipal extends Application {
 			proyecto = formularioProyecto.getDatos();
 			proyecto.setEntidades(data);
 			convertToXmlFile(file, proyecto, Proyecto.class);
+		}
+
+		@Override
+		public boolean condicionanteEjecucion() {
+			if (pathArchivoProyecto != null)
+				return true;
+			else
+				return false;
 		};
 	};
 
@@ -86,6 +101,11 @@ public class AplicacionPrincipal extends Application {
 		@Override
 		public void ejecutarJeeAction(File file) {
 			cargarProyectoDesdeArchivo(file, true);
+		}
+
+		@Override
+		public boolean condicionanteEjecucion() {
+			return true;
 		};
 	};
 
@@ -103,15 +123,21 @@ public class AplicacionPrincipal extends Application {
 				}
 			}
 		}
+
+		@Override
+		public boolean condicionanteEjecucion() {
+			return true;
+		}
 	};
-	
+
 	EventHandler<ActionEvent> ehGuardarProyecto = new SaveEventHandler(
 			saveActionListener);
 
 	EventHandler<ActionEvent> ehCargarProyecto = new LoadEventHandler(
 			loadActionListener);
 
-	EventHandler<ActionEvent> ehSeleccionarClase = new SelectClassDTOEventHandler(loadClassActionListener);
+	EventHandler<ActionEvent> ehSeleccionarClase = new SelectClassDTOEventHandler(
+			loadClassActionListener);
 
 	EventHandler<ActionEvent> ehBuscaAtributos = new EventHandler<ActionEvent>() {
 
@@ -122,14 +148,6 @@ public class AplicacionPrincipal extends Application {
 
 	};
 
-	EventHandler<ActionEvent> ehIdentificaElementos = new EventHandler<ActionEvent>() {
-
-		@Override
-		public void handle(ActionEvent arg0) {
-			indentificarElementosGenerables();
-		}
-	};
-
 	private EventHandler<WindowEvent> ehOnCerrarApp = new EventHandler<WindowEvent>() {
 		@Override
 		public void handle(WindowEvent event) {
@@ -138,14 +156,26 @@ public class AplicacionPrincipal extends Application {
 	};
 
 	private EventHandler<ActionEvent> ehGenerarTodos = new GenerarFuentesEHandler();
+	private EventHandler<ActionEvent> ehIdentificaElementos = new IdentificarElementosEHandler();
+
+	IModificaEntidad iModificaEntidad = new IModificaEntidad() {
+		@Override
+		public void modificar(Entidad entidad) {
+			data.remove(entidad);
+			data.add(entidad);
+		}
+	};
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(Stage stage) throws Exception {
+		this.primaryStage = stage;
 		conf = ConfiguracionApp.getInstancia().leerArchivoConfiguracion();
 
 		root = new BorderPane();
 		root.setTop(getMenu());
 		root.setLeft(panelEntidades(primaryStage));
+
+		entidadTabPane.setModificadorEntidad(iModificaEntidad);
 
 		VBox vBox = new VBox();
 		vBox.getChildren().add(formularioProyecto);
@@ -156,58 +186,18 @@ public class AplicacionPrincipal extends Application {
 		root.setBottom(barraDeEstado);
 
 		Scene scene = new Scene(root);
-		String cssEstilo = getClass().getClassLoader().getResource("DarkTheme.css").toExternalForm();
+		String cssEstilo = getClass().getClassLoader()
+				.getResource("DarkTheme.css").toExternalForm();
 		scene.getStylesheets().add(cssEstilo);
-		
-		Image icono = new Image(getClass().getClassLoader().getResourceAsStream("graph/genjee.png"));
-		primaryStage.getIcons().add(icono);
-		
-		primaryStage.setTitle("Generador de Código JEE - GenJeE");
-		primaryStage.setScene(scene);
-		primaryStage.setOnCloseRequest(ehOnCerrarApp);
-		primaryStage.show();
-	}
 
-	protected void indentificarElementosGenerables() {
+		Image icono = new Image(getClass().getClassLoader()
+				.getResourceAsStream("graph/genjee.png"));
+		this.primaryStage.getIcons().add(icono);
 
-		proyecto = formularioProyecto.getDatos();
-
-		for (Entidad entidadActual : data) {
-
-			String nombreVO = entidadActual.getNombre().replace(
-					proyecto.getPrefijosEntidades(), Constantes.PREFIJO_VO);
-
-			GenerarVO generarVO = new GenerarVO(proyecto);
-			// Se crea el VO
-			Vo vo = new Vo();
-			vo.setNombre(nombreVO);
-			vo.setPaquete(proyecto.getPaqueteVos());
-			vo.setAtributos(generarVO.adaptarAtributosEntidad(entidadActual));
-			entidadActual.setVo(vo);
-
-			// Se crea el par EJB y EJBImpl a partir del nombre del VO.
-			CrudService crudService = new CrudService();
-			crudService.setNombre(nombreVO);
-			vo.setPaquete(proyecto.getPaqueteCrudService());
-			entidadActual.setCrudService(crudService);
-
-			Dao dao = new Dao(entidadActual.getNombre() + Constantes.SUFIJO_DAO);
-			dao.setPaquete(proyecto.getPaqueteDaos());
-			entidadActual.setDao(dao);
-
-			ControllerMB controllerMB = new ControllerMB();
-			controllerMB.setNombre(vo.getNombre().replace(
-					Constantes.PREFIJO_VO, "")
-					+ Constantes.SUFIJO_JSF_CONTROLLER);
-			controllerMB.setPaquete(proyecto.getPaqueteJsfController());
-			entidadActual.setControllerMB(controllerMB);
-
-			formularioProyecto.setDatos(proyecto);
-
-			entidadActual.setPaquete(proyecto.getPaqueteEntrada());
-			proyecto.getEntidades().add(entidadActual);
-
-		}
+		actualizarTituloVentana();
+		this.primaryStage.setScene(scene);
+		this.primaryStage.setOnCloseRequest(ehOnCerrarApp);
+		this.primaryStage.show();
 	}
 
 	private MenuBar getMenu() {
@@ -215,10 +205,13 @@ public class AplicacionPrincipal extends Application {
 
 		Menu menuFile = new Menu("Archivo");
 		MenuItem mnCargar = new MenuItem("Cargar Proyecto");
-		mnCargar.setOnAction(ehCargarProyecto);
+		mnCargar.setOnAction(new CargarProyectoEHandler());
 
 		MenuItem mnGuardar = new MenuItem("Guardar Proyecto");
-		mnGuardar.setOnAction(ehGuardarProyecto);
+		mnGuardar.setOnAction(new GuardarProyectoEHandler());
+		
+		MenuItem mnGuardarCopia = new MenuItem("Guardar Copia Proyecto");
+		mnGuardarCopia.setOnAction(new GuardarProyectoEHandler(true));
 
 		Menu recientes = new Menu("Recientes");
 
@@ -233,7 +226,7 @@ public class AplicacionPrincipal extends Application {
 			});
 		}
 
-		menuFile.getItems().addAll(mnCargar, mnGuardar, recientes);
+		menuFile.getItems().addAll(mnCargar, mnGuardar, mnGuardarCopia, recientes);
 
 		Menu menuHerramientas = new Menu("Herramientas");
 
@@ -244,10 +237,17 @@ public class AplicacionPrincipal extends Application {
 		MenuItem identificaMI = new MenuItem("Identifica Elementos");
 		identificaMI.setOnAction(ehIdentificaElementos);
 		menuHerramientas.getItems().add(identificaMI);
-		
+
 		MenuItem generarMI = new MenuItem("Generar Código Fuente");
 		generarMI.setOnAction(ehGenerarTodos);
 		menuHerramientas.getItems().add(generarMI);
+		
+		menuHerramientas.getItems().add(new SeparatorMenuItem());
+		Menu menuExtras = new Menu("Extras");
+		MenuItem genAccesosMant = new MenuItem("Generar Botones JSF para Accesos");
+		genAccesosMant.setOnAction(new GenerarMenuEnPlantillaEHandler());
+		menuExtras.getItems().add(genAccesosMant);
+		menuHerramientas.getItems().add(menuExtras);
 
 		menuBar.getMenus().addAll(menuFile, menuHerramientas);
 
@@ -256,7 +256,7 @@ public class AplicacionPrincipal extends Application {
 
 	private HBox panelEntidades(final Stage stage) {
 
-		//final Popup popup = new Popup();
+		// final Popup popup = new Popup();
 
 		// popup.getContent().addAll(formularioEntidad);
 
@@ -339,42 +339,177 @@ public class AplicacionPrincipal extends Application {
 			}
 			tableViewEntidades.setItems(data);
 
-			System.out.println("Cargando " + file.getAbsolutePath());
+			pathArchivoProyecto = file.getAbsolutePath();
+			actualizarTituloVentana();
+			System.out.println("Cargando " + pathArchivoProyecto);
 
 			barraDeEstado.setEntidades(data.size());
 		}
 	}
+
+	private void actualizarTituloVentana() {
+		String titulo = null;
+		if (pathArchivoProyecto != null) {
+			titulo = "GeeJeeFx: " + pathArchivoProyecto;
+		} else {
+			titulo = "* GeeJeeFx: [Proyecto Sin Guardar]";
+		}
+		primaryStage.setTitle(titulo);
+	}
 	
-	class GenerarFuentesEHandler implements EventHandler<ActionEvent> {
+	class CargarProyectoEHandler implements EventHandler<ActionEvent> {
+
+		@Override
+		public void handle(ActionEvent arg0) {
+			FileChooser fileChooser = new FileChooser();
+			FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+					"Xml (*.xml)", "*.xml");
+			fileChooser.getExtensionFilters().add(extFilter);
+			File file = fileChooser.showOpenDialog(null);
+			cargarProyectoDesdeArchivo(file, true);
+		}}
+
+	class GuardarProyectoEHandler implements EventHandler<ActionEvent> {
+		boolean esCopia;
+
+		public GuardarProyectoEHandler(boolean esCopia) {
+			super();
+			this.esCopia = esCopia;
+		}
 		
-		long t0,t1;
+		public GuardarProyectoEHandler() {
+			super();
+			this.esCopia = false;
+		}
+
+		@Override
+		public void handle(ActionEvent event) {
+			File file = null;
+			if (pathArchivoProyecto == null || esCopia) {
+				FileChooser fileChooser = new FileChooser();
+				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML (*.xml)", "*.xml");
+				fileChooser.getExtensionFilters().add(extFilter);
+				file = fileChooser.showSaveDialog(null);
+				pathArchivoProyecto = file.getAbsolutePath();
+				actualizarTituloVentana();
+			}else{
+				file = new File(pathArchivoProyecto);
+			}
+			conf.setArchivoReciente(file.getAbsolutePath());
+			proyecto = formularioProyecto.getDatos();
+			proyecto.setEntidades(data);
+			convertToXmlFile(file, proyecto, Proyecto.class);
+		}
+
+	}
+
+	class GenerarFuentesEHandler implements EventHandler<ActionEvent> {
+
+		long t0, t1;
 
 		@Override
 		public void handle(ActionEvent arg0) {
 			t0 = new Date().getTime();
 			for (final Entidad entidad : proyecto.getEntidades()) {
-				
-				Thread hilo = new Thread(new Runnable() {
-					
-					@Override
-					public void run() {
-						generarFuente(proyecto, entidad, Elementos.VO);
-						generarFuente(proyecto, entidad, Elementos.DAO);
-						generarFuente(proyecto, entidad, Elementos.EJB);
-						generarFuente(proyecto, entidad, Elementos.EJB_IMPL);
-						generarFuente(proyecto, entidad, Elementos.MBEAN);
-						generarFuente(proyecto, entidad, Elementos.XHTML);
-						
-					}
-				});
-				
-				hilo.start();
-				
+
+				if (entidad.getVo().isGenerar()) {
+					generarFuente(proyecto, entidad, Elementos.VO);
+				}
+
+				if (entidad.getDao().isGenerar()) {
+					generarFuente(proyecto, entidad, Elementos.DAO);
+				}
+
+				if (entidad.getCrudService().isGenerar()) {
+					generarFuente(proyecto, entidad, Elementos.EJB);
+					generarFuente(proyecto, entidad, Elementos.EJB_IMPL);
+				}
+
+				if (entidad.getControllerMB().isGenerar()) {
+					generarFuente(proyecto, entidad, Elementos.MBEAN);
+					generarFuente(proyecto, entidad, Elementos.XHTML);
+					generarFuente(proyecto, entidad, Elementos.CONVERTER_JSF);
+				}
+
 			}
 			generarFuente(proyecto, null, Elementos.MAPPER);
 			t1 = new Date().getTime();
-			System.out.println("Ejecución en :"+(t1-t0));
+			System.out.println("Ejecución en :" + (t1 - t0));
 		}
 	}
+	
+	class IdentificarElementosEHandler implements EventHandler<ActionEvent> {
+
+		@Override
+		public void handle(ActionEvent arg0) {
+			
+			proyecto = formularioProyecto.getDatos();
+
+			for (Entidad entidadActual : data) {
+
+//				String nombreVO = entidadActual.getNombre().replace(
+//						proyecto.getPrefijosEntidades(), Constantes.PREFIJO_VO);
+				
+				String nombreDAO = entidadActual.getNombre() + Constantes.SUFIJO_DAO;
+				
+				String nombreVO = HelperNombres.cambioNombreEntityToVO(entidadActual.getNombre(), proyecto.getPrefijosEntidades());
+
+				GenerarVO generarVO = new GenerarVO(proyecto);
+				// Se crea el VO
+				Vo vo = new Vo();
+				vo.setNombre(nombreVO);
+				vo.setPaquete(proyecto.getPaqueteVos());
+				vo.setAtributos(generarVO.adaptarAtributosEntidad(entidadActual));
+				vo.printAtributos();
+				entidadActual.setVo(vo);
+
+				// Se crea el par EJB y EJBImpl a partir del nombre del VO.
+				CrudService crudService = new CrudService();
+				crudService.setNombre(nombreVO);
+				vo.setPaquete(proyecto.getPaqueteCrudService());
+				entidadActual.setCrudService(crudService);
+
+				Dao dao = new Dao();
+				dao.setNombre(nombreDAO);
+				
+				dao.setPaquete(proyecto.getPaqueteDaos());
+				entidadActual.setDao(dao);
+
+				ControllerMB controllerMB = new ControllerMB();
+				controllerMB.setNombre(HelperNombres.jsfMBeanFromVO(vo.getNombre()));
+				controllerMB.setPaquete(proyecto.getPaqueteJsfController());
+				entidadActual.setControllerMB(controllerMB);
+
+				formularioProyecto.setDatos(proyecto);
+
+				entidadActual.setPaquete(proyecto.getPaqueteEntrada());
+				proyecto.getEntidades().add(entidadActual);
+
+			}
+			
+		}
+		
+	}
+	
+	class GenerarMenuEnPlantillaEHandler implements EventHandler<ActionEvent> {
+
+		private static final String PATRON_BOTON = "\n\t\t<p:menuitem value=\"{1}\" " +
+								"action=\"{0}?faces-redirect=true\" />";
+
+		@Override
+		public void handle(ActionEvent arg0) {
+			System.out.println("<h:form> "+
+					"\n<p:menu> "+
+						"\n\t<p:submenu label=\"Mantenedores\">");
+			for (final Entidad entidad : proyecto.getEntidades()) {
+				String nombreURL = HelperNombres.nombreMantenedorXHTML(entidad.getVo().getNombre());
+				System.out.println(MessageFormat.format(PATRON_BOTON, nombreURL, entidad.getVo().getNombre()));
+			}
+			System.out.println("</p:submenu> "+
+					"\n\t</p:menu> "+
+				"\n</h:form>");
+		}
+	}
+	
 
 }

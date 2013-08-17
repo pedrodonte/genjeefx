@@ -32,6 +32,8 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/pcarrasco/protask.jar"/>
+	<classpathentry kind="lib" path="C:/pcarrasco/RECURSOS/jars/protas-jpa-20130821.jar"/>
+	<classpathentry kind="lib" path="C:/pcarrasco/RECURSOS/jars/conpetos-jpa-20130821.jar"/>
+	<classpathentry kind="lib" path="C:/pcarrasco/RECURSOS/jars/xpi-gestion.v1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

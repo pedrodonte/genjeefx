@@ -7,10 +7,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class AplicacionXmlConfig {
-	
+
 	private List<String> archivosRecientes = new ArrayList<>();
 
-	public List<String> getArchivosRecientes() {
+	public final List<String> getArchivosRecientes() {
 		return archivosRecientes;
 	}
 
@@ -18,9 +18,9 @@ public class AplicacionXmlConfig {
 		this.archivosRecientes = archivosRecientes;
 	}
 
-	public void setArchivoReciente(String absolutePath) {
+	public void setArchivoReciente(final String absolutePath) {
 		if (!archivosRecientes.contains(absolutePath)) {
-			archivosRecientes.add(absolutePath);	
+			archivosRecientes.add(absolutePath);
 		}
 	}
 

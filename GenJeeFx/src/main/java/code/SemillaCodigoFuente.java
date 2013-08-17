@@ -43,6 +43,11 @@ public class SemillaCodigoFuente {
 	private String claseMapper;
 	private String instanciaMapper;
 	
+	private String paqueteJSFConverter;
+	private String claseJSFConverter;
+	private String instanciaJSFConverter;
+	private String labelVOAtributo;
+	
 	private String tituloFormulario;
 	private String camposTabla;
 	private String camposFormulario;
@@ -195,6 +200,9 @@ public class SemillaCodigoFuente {
 	public String getFullMapper() {
 		return paqueteMapper+"."+claseMapper;
 	}
+	public String getFullConverter() {
+		return paqueteJSFConverter+"."+claseJSFConverter;
+	}
 	public String getPaqueteMB() {
 		return paqueteMB;
 	}
@@ -286,6 +294,35 @@ public class SemillaCodigoFuente {
 	}
 	public void setExtension(String extension) {
 		this.extension = extension;
+	}
+	
+	public String getPaqueteJSFConverter() {
+		return paqueteJSFConverter;
+	}
+	public void setPaqueteJSFConverter(String paqueteJSFConverter) {
+		this.paqueteJSFConverter = paqueteJSFConverter;
+	}
+	public String getClaseJSFConverter() {
+		return claseJSFConverter;
+	}
+	public void setClaseJSFConverter(String claseJSFConverter) {
+		this.claseJSFConverter = claseJSFConverter;
+	}
+	public String getInstanciaJSFConverter() {
+		instanciaJSFConverter = StringHelper.toCamelMinuscula(claseJSFConverter);
+		return instanciaJSFConverter;
+	}
+	public void setInstanciaJSFConverter(String instanciaJSFConverter) {
+		this.instanciaJSFConverter = instanciaJSFConverter;
+	}
+	public String getLabelVOAtributo() {
+		return labelVOAtributo;
+	}
+	public void setLabelVOAtributo(String labelVOAtributo) {
+		this.labelVOAtributo = labelVOAtributo;
+	}
+	public String getLabelVOMetodo() {
+		return "get"+StringHelper.toCamelMayuscula(labelVOAtributo)+"()";
 	}
 
 }

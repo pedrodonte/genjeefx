@@ -2,6 +2,7 @@ package generar.modelo;
 
 import generar.Constantes.TipoCampoFormulario;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 public class Atributo extends ElementoBase implements Cloneable{
@@ -9,6 +10,10 @@ public class Atributo extends ElementoBase implements Cloneable{
 	private TipoAtributo tipo = new TipoAtributo();
 	
 	private TipoCampoFormulario tipoCampoFormulario;
+	/**
+	 * Es identificador unico de la instancia, por ejemplo es la PK o tiene la anotación ID de JPA
+	 */
+	private boolean identificadorUnico;
 	
 	public Atributo(Field field) {
 		super.setNombre(field.getName());
@@ -16,6 +21,8 @@ public class Atributo extends ElementoBase implements Cloneable{
 		boolean esPrimitivo = false;
 		String nombreTipo = null;
 		String paquete = null;
+		
+		buscaAnotaciones(field);
 		
 		// Analisis
 		String parteA = field.getType().toString().split(" ")[0];
@@ -41,6 +48,14 @@ public class Atributo extends ElementoBase implements Cloneable{
 		System.out.println(this.toString());
 	}
 	
+	@Deprecated
+	private void buscaAnotaciones(Field field) {
+		Annotation[] anotaciones = field.getAnnotations();
+		for (Annotation a : anotaciones) {
+			System.out.println(a.getClass());
+		}
+	}
+
 	public Atributo() {
 	}
 	
@@ -56,6 +71,12 @@ public class Atributo extends ElementoBase implements Cloneable{
 		return (Atributo) super.clone();
 	}
 	
+	/**
+	 * Determina si el tipo de dato es importable para generar la clase,
+	 * esto es si debe ir en el bloque de import *.Clase ;
+	 * 
+	 * @return si es o no importable
+	 */
 	public boolean esImportable(){
 		
 		boolean atributoImportable = false;
@@ -82,6 +103,14 @@ public class Atributo extends ElementoBase implements Cloneable{
 	public String toString() {
 		return "Atributo [tipo=" + tipo.toString2() + ", tipoCampoFormulario="	+ tipoCampoFormulario + "]";
 	}
-	
+
+	public boolean isIdentificadorUnico() {
+		return identificadorUnico;
+	}
+
+	public void setIdentificadorUnico(boolean identificadorUnico) {
+		this.identificadorUnico = identificadorUnico;
+	}
+
 
 }

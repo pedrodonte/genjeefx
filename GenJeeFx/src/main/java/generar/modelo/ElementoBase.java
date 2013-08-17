@@ -4,6 +4,7 @@ public class ElementoBase {
 	
 	private String nombre;
 	private String paquete;
+	private boolean generar = true;
 
 	public String getNombre() {
 		return nombre;
@@ -63,6 +64,14 @@ public class ElementoBase {
 	@Override
 	public String toString() {
 		return "ElementoBase [nombre=" + nombre + ", paquete=" + paquete + "]";
+	}
+
+	public boolean isGenerar() {
+		return generar;
+	}
+
+	public void setGenerar(boolean generar) {
+		this.generar = generar;
 	}
 	
 	

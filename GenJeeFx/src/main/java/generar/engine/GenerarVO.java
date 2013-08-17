@@ -1,6 +1,5 @@
 package generar.engine;
 
-import generar.Constantes;
 import generar.modelo.Atributo;
 import generar.modelo.Entidad;
 import generar.modelo.Proyecto;
@@ -8,7 +7,7 @@ import generar.modelo.Proyecto;
 import java.util.ArrayList;
 import java.util.List;
 
-import util.StringHelper;
+import util.HelperNombres;
 
 public class GenerarVO {
 
@@ -31,8 +30,11 @@ public class GenerarVO {
 		try {
 			// ahora se adaptan los nombres a vo
 
-			String nombreType = cambioNombreEntityToVO(at.getTipo().getNombre());
-			String nombreAtributo = cambioNombreEntityToVO(at.getNombre());
+//			String nombreType = cambioNombreEntityToVO(at.getTipo().getNombre());
+//			String nombreAtributo = cambioNombreEntityToVO(at.getNombre());
+			
+			String nombreType = HelperNombres.cambioNombreEntityToVO(at.getTipo().getNombre(), proyecto.getPrefijosEntidades());
+			String nombreAtributo = HelperNombres.cambioNombreEntityToVO(at.getNombre(), proyecto.getPrefijosEntidades());
 
 			if (!at.getTipo().isEsPrimitivo()) {
 
@@ -51,6 +53,13 @@ public class GenerarVO {
 		return at;
 	}
 
+	
+	/**
+	 * Recibe el paquete del tipo de dato del atributo, comprueba si es un DTO y si es así
+	 * retorna el nombre de paquetes del VO, sino retorna el mismo.
+	 * @param paquete del tipo de dato
+	 * @return paquete varificado si es o no DTO
+	 */
 	private String cambioPaqueteTipoDatoEntidad(String paquete) {
 		boolean esEntidad = (paquete.equals(proyecto.getPaqueteEntrada()));
 
@@ -59,35 +68,12 @@ public class GenerarVO {
 		return paqueteTipo;
 	}
 
-	private String cambioNombreEntityToVO(String nombreAtributo) {
-
-		// Tipo de Dato del atributo
-		for (String prefijo : getPrefijosEntidades()) {
-			nombreAtributo = nombreAtributo.replace(prefijo,
-					Constantes.PREFIJO_VO);
-		}
-
-		// Nombre del atributo
-		for (String prefijo : getPrefijosEntidades()) {
-			String prefijoMinusculas = prefijo;
-			prefijoMinusculas = prefijoMinusculas.substring(0, 1).toLowerCase()
-					+ prefijoMinusculas.substring(1);
-
-			nombreAtributo = nombreAtributo.replace(prefijoMinusculas,
-					Constantes.PREFIJO_VO.toLowerCase());
-
-		}
-		return nombreAtributo;
-	}
-
-	private List<String> getPrefijosEntidades() {
-		return StringHelper.proListado(proyecto.getPrefijosEntidades());
-	}
-
 	/**
 	 * Procesa los atributos del DTO y los habilita para que pertenesca al VO,
 	 * Además genera la tabla de mapeo que se usara para 
 	 * construir el Mapper entre DTO y VO.
+	 * 
+	 * usa la caracteristica paso por referencia para setear el mapeo VO-DTO
 	 * 
 	 * @param DTO con sus Atributos
 	 * @return lista de atributos para el VO
@@ -98,6 +84,10 @@ public class GenerarVO {
 			if (!aDTO.getTipo().isEsInterface()) {
 				if (!aDTO.getNombre().equals("serialVersionUID")) {
 					Atributo aVO = this.getDeficinionAtributoVO(aDTO);
+					aVO.setTipoCampoFormulario( MapeoTipoCampo.get( aVO.getTipo().getNombre() ) );
+					
+					
+					
 					atributosVO.add(aVO);
 					entidad.getMapeoAtributosVoDto().put(aVO, aDTO);
 				}
@@ -105,5 +95,6 @@ public class GenerarVO {
 		}
 		return atributosVO;
 	}
+
 
 }

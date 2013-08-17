@@ -19,6 +19,7 @@ public class Proyecto extends ElementoBase{
 	private String paqueteDaos;
 	private String paqueteCrudService;
 	private String paqueteJsfController;
+	private String paqueteJSFConverter;
 	
 	private String webContent;
 
@@ -87,6 +88,12 @@ public class Proyecto extends ElementoBase{
 	}
 	public void setWebContent(String webContent) {
 		this.webContent = webContent;
+	}
+	public String getPaqueteJSFConverter() {
+		return paqueteJSFConverter;
+	}
+	public void setPaqueteJSFConverter(String paqueteJSFConverter) {
+		this.paqueteJSFConverter = paqueteJSFConverter;
 	}
 	
 }

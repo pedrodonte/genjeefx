@@ -8,7 +8,7 @@ public class ConfiguracionApp {
 	XmlUtil xmlUtil = new XmlUtil();
 
 	private static ConfiguracionApp INSTANCIA;
-	public ConfiguracionApp() {}
+	private ConfiguracionApp() {}
 	private static void crearInstancia() {
 		if (INSTANCIA == null) {
 			if (INSTANCIA == null) {

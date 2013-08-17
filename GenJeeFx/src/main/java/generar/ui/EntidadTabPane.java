@@ -9,26 +9,19 @@ public class EntidadTabPane extends TabPane {
 	
 	Tab atributosTab = new Tab("Atributos Entidad");
 	Tab atributosVoTab = new Tab("Atributos Value Object");
-	Tab generacionTab = new Tab("Configuración Elementos");
 	Tab elementosTab = new Tab("Elementos a Generar");
 	
 	FormularioEntidad formularioEntidad = new FormularioEntidad();
 	AtributosTableView atributosTableView = new AtributosTableView();
 	AtributosTableView atributosVoTableView = new AtributosTableView();
 	
-	
 	public EntidadTabPane() {
 		super();
-		
-		
 		initPanel();
-		
 	}
-
 
 	private void initPanel() {
 		atributosTab.setClosable(false);
-		generacionTab.setClosable(false);
 		elementosTab.setClosable(false);
 		atributosVoTab.setClosable(false);
 		
@@ -36,24 +29,28 @@ public class EntidadTabPane extends TabPane {
 		atributosTab.setContent(atributosTableView);
 		atributosVoTab.setContent(atributosVoTableView);
 		
-		this.getTabs().addAll(atributosTab,atributosVoTab, generacionTab, elementosTab);
+		this.getTabs().addAll(atributosTab,atributosVoTab, elementosTab);
 		
 	}
 
 
 	public void setEntidad(Entidad registroSeleccionado) {
-		formularioEntidad.setEntidad(registroSeleccionado);
-		
-		atributosTableView.vaciarTabla();
-		for (Atributo at : registroSeleccionado.getAtributos()) {
-			atributosTableView.addAtributo(at);
+		if (registroSeleccionado != null) {
+			formularioEntidad.setEntidad(registroSeleccionado);
+			atributosTableView.vaciarTabla();
+			for (Atributo at : registroSeleccionado.getAtributos()) {
+				atributosTableView.addAtributo(at);
+			}
+			atributosVoTableView.vaciarTabla();
+			for (Atributo at : registroSeleccionado.getVo().getAtributos()) {
+				atributosVoTableView.addAtributo(at);
+			}
 		}
 		
-		atributosVoTableView.vaciarTabla();
-		for (Atributo at : registroSeleccionado.getVo().getAtributos()) {
-			atributosVoTableView.addAtributo(at);
-		}
-		
+	}
+	
+	public void setModificadorEntidad(IModificaEntidad modificaEntidad){
+		formularioEntidad.setiModificaEntidad(modificaEntidad);
 	}
 
 }

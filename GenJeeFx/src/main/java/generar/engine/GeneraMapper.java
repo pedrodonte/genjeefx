@@ -33,7 +33,7 @@ public class GeneraMapper {
 		}else{
 			messageFormat = new MessageFormat(PATRON_TO_VO);
 		}
-		return messageFormat.format(nombres).toString();
+		return TAB+TAB+TAB+TAB+messageFormat.format(nombres).toString();
 	}
 	
 	public static String generarToDtoAtributo(Entry<Atributo, Atributo> mapeoAtributo, Proyecto proyecto) {
@@ -49,7 +49,7 @@ public class GeneraMapper {
 		}else{
 			messageFormat = new MessageFormat(PATRON_TO_DTO);
 		}
-		return messageFormat.format(nombres).toString();
+		return TAB+TAB+TAB+TAB+messageFormat.format(nombres).toString();
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class GeneraMapper {
 
 		while (it.hasNext()) {
 			Entry<Atributo, Atributo> entry = (Entry<Atributo, Atributo>) it.next();
-			setts.append(TAB+generarToVoAtributo(entry, proyecto)+NL);
+			setts.append(generarToVoAtributo(entry, proyecto)+NL);
 		}
 		
 		return setts.toString();
@@ -89,7 +89,7 @@ public class GeneraMapper {
 
 		while (it.hasNext()) {
 			Entry<Atributo, Atributo> entry = (Entry<Atributo, Atributo>) it.next();
-			setts.append(TAB+generarToDtoAtributo(entry, proyecto)+NL);
+			setts.append(generarToDtoAtributo(entry, proyecto)+NL);
 		}
 		
 		return setts.toString();

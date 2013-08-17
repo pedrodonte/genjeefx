@@ -1,5 +1,7 @@
 package code;
 
+import java.util.Date;
+
 import generar.Constantes;
 import generar.engine.BuscaGetterSetterParaVOs;
 import generar.engine.BuscaImportsParaVOs;
@@ -9,7 +11,6 @@ import generar.engine.GeneraMapper;
 import generar.modelo.Atributo;
 import generar.modelo.Entidad;
 import generar.modelo.Proyecto;
-
 import code.elementos.ControllerMBCodigoFuente;
 import code.elementos.CrudServiceEJB;
 import code.elementos.CrudServiceEJBImpl;
@@ -88,7 +89,6 @@ public class CodigoFactory {
 			seed.setImports(imports.toString());
 			seed.setMetodosMapper(metodos.toString());
 			seed.setClaseMapper(Constantes.CLASE_MAPPER);
-			System.out.println("setMetodosMapper  " + metodos.toString());
 
 			CodigoFuente sourceCode = new MapperHelper();
 			sourceCode.generarArchivoFuente(seed);
@@ -177,6 +177,8 @@ public class CodigoFactory {
 	public static void generarFuente(Proyecto proyecto, Entidad entidad,
 			Elementos elemento) {
 		
+		long t0,t1;
+		t0 = new Date().getTime();
 		switch (elemento) {
 		
 		case VO:
@@ -210,6 +212,9 @@ public class CodigoFactory {
 		default:
 			break;
 		}
+		
+		t1 = new Date().getTime();
+		System.out.println("\t :"+elemento.toString()+(t1-t0));
 	}
 
 	private static SemillaCodigoFuente inicializarSemilla(Proyecto proyecto) {

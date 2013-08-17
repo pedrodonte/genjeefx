@@ -21,5 +21,7 @@ public class Constantes {
 	public static final String CLASE_MAPPER = "HelperMapper";
 	
 	public static final String XHTML_EOF = "<<<*EOF*>>>";
+	
+	public enum TipoCampoFormulario{Fecha, Numero, Texto, VO, Desconocido};
 
 }

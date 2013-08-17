@@ -71,7 +71,6 @@ public class HelperArchivos {
 	
 	public static void comprobarPaqueteCreado(String string) throws IOException{
 		Path path = Paths.get(string.substring(0,string.lastIndexOf("/")));
-		System.out.println("Comprobando "+string.substring(string.lastIndexOf("/"), string.length()));
 		if (Files.notExists(path)) {
 			Files.createDirectories(path);
 		}
@@ -79,7 +78,6 @@ public class HelperArchivos {
 	
 	public static void comprobarArchivoCreado(String string) throws IOException{
 		Path path = Paths.get(string);
-		System.out.println("Comprobando "+string);
 		if (Files.notExists(path)) {
 			Files.createFile(path);
 		}

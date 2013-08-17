@@ -25,6 +25,13 @@ public class Conceptos {
 			};
 		
 		System.out.println(GeneraCodigoDesdePatron.build(param1, PatronesCodigoFuente.JSF_MANT));
+		
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+							
+			}
+		});
 	}
 
 

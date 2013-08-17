@@ -23,7 +23,6 @@ public abstract class CodigoFuente {
 		this.pathArchivoFuente = prepararPath(this.pathArchivoFuente);
 		this.pathArchivoFuente = this.pathArchivoFuente + this.semilla.getExtension();
 		this.codigoFuente = generarCodigoFuente();
-		this.semilla.print();
 		if (semilla.isCreaArchivo()) {
 			guardarArchivo();
 		}else{
@@ -48,7 +47,7 @@ public abstract class CodigoFuente {
 	protected abstract Object[] prepararParametros(SemillaCodigoFuente semillaCodigoFuente);
 
 	private void guardarArchivo(){
-		System.out.println(pathArchivoFuente);
+//		System.out.print(pathArchivoFuente);
 		try {
 			HelperArchivos.comprobarPaqueteCreado(pathArchivoFuente);
 			HelperArchivos.comprobarArchivoCreado(pathArchivoFuente);

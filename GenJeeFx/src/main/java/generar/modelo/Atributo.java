@@ -1,10 +1,14 @@
 package generar.modelo;
 
+import generar.Constantes.TipoCampoFormulario;
+
 import java.lang.reflect.Field;
 
 public class Atributo extends ElementoBase implements Cloneable{
 	
 	private TipoAtributo tipo = new TipoAtributo();
+	
+	private TipoCampoFormulario tipoCampoFormulario;
 	
 	public Atributo(Field field) {
 		super.setNombre(field.getName());
@@ -33,6 +37,8 @@ public class Atributo extends ElementoBase implements Cloneable{
 		this.tipo.setEsPrimitivo(esPrimitivo);
 		this.tipo.setNombre(nombreTipo);
 		this.tipo.setPaquete(paquete);
+		
+		System.out.println(this.toString());
 	}
 	
 	public Atributo() {
@@ -46,11 +52,6 @@ public class Atributo extends ElementoBase implements Cloneable{
 		this.tipo = tipo;
 	}
 	
-	@Override
-	public String toString() {
-		return "Atributo [tipo=" + tipo.toString2() + ", getNombre()=" + getNombre() + "]";
-	}
-
 	public Atributo clone() throws CloneNotSupportedException {
 		return (Atributo) super.clone();
 	}
@@ -67,6 +68,19 @@ public class Atributo extends ElementoBase implements Cloneable{
 		
 		
 		return atributoImportable;
+	}
+
+	public TipoCampoFormulario getTipoCampoFormulario() {
+		return tipoCampoFormulario;
+	}
+
+	public void setTipoCampoFormulario(TipoCampoFormulario tipoCampoFormulario) {
+		this.tipoCampoFormulario = tipoCampoFormulario;
+	}
+
+	@Override
+	public String toString() {
+		return "Atributo [tipo=" + tipo.toString2() + ", tipoCampoFormulario="	+ tipoCampoFormulario + "]";
 	}
 	
 

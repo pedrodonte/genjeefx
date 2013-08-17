@@ -352,17 +352,28 @@ public class AplicacionPrincipal extends Application {
 		@Override
 		public void handle(ActionEvent arg0) {
 			t0 = new Date().getTime();
-			for (Entidad entidad : proyecto.getEntidades()) {
-				generarFuente(proyecto, entidad, Elementos.VO);
-				generarFuente(proyecto, entidad, Elementos.DAO);
-				generarFuente(proyecto, entidad, Elementos.EJB);
-				generarFuente(proyecto, entidad, Elementos.EJB_IMPL);
-				generarFuente(proyecto, entidad, Elementos.MBEAN);
-				generarFuente(proyecto, entidad, Elementos.XHTML);
+			for (final Entidad entidad : proyecto.getEntidades()) {
+				
+				Thread hilo = new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						generarFuente(proyecto, entidad, Elementos.VO);
+						generarFuente(proyecto, entidad, Elementos.DAO);
+						generarFuente(proyecto, entidad, Elementos.EJB);
+						generarFuente(proyecto, entidad, Elementos.EJB_IMPL);
+						generarFuente(proyecto, entidad, Elementos.MBEAN);
+						generarFuente(proyecto, entidad, Elementos.XHTML);
+						
+					}
+				});
+				
+				hilo.start();
+				
 			}
 			generarFuente(proyecto, null, Elementos.MAPPER);
 			t1 = new Date().getTime();
-			System.out.println("Código generado en :"+(t1-t0));
+			System.out.println("Ejecución en :"+(t1-t0));
 		}
 	}
 

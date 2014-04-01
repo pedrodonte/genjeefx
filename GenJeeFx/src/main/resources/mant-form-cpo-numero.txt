@@ -1,0 +1,9 @@
+						<h:outputText value="{0}" />
+						<p:inputText required="true" styleClass="cpos-mantcli"
+							requiredMessage="Debe ingresar un Texto"
+							rendered="#[{1}.modoFormulario ne ''OFF'']"
+							value="#[{1}.registroEnEdicion.{0}]">
+								<f:convertNumber integerOnly="true" type="number" />
+						</p:inputText>
+						<h:outputText rendered="#[{1}.modoFormulario eq ''OFF'']"
+							value="#[{1}.registroEnEdicion.{0}]" />

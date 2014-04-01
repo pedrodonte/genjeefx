@@ -35,7 +35,7 @@ public class Vo extends ElementoBase{
 	public String getAtributoLabel() {
 		try {
 			for (Atributo a : atributos) {
-				if (a.getTipoCampoFormulario().equals(TipoCampoFormulario.Texto)) {
+				if (a.getTipoCampoFormulario().equals(TipoCampoFormulario.Numero)) {
 					return a.getNombre();
 				}
 			}

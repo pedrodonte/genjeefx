@@ -1,0 +1,27 @@
+						<h:outputText value="{0}" />
+						
+						<p:selectOneMenu 
+							required="true" styleClass="cpos-mantcli"
+							requiredMessage="Debe seleccionar"
+							rendered="#[{1}.modoFormulario ne ''OFF'']"
+							value="#[{1}.registroEnEdicion.{0}]" 
+							converter="#[{2}]">
+			
+							<f:selectItem itemLabel="Seleccione Item" itemValue="" />
+			
+							<f:selectItems value="#[{3}.registros]" var="item"
+								itemLabel="#[item.{4}]" itemValue="#[item]" />
+			
+						</p:selectOneMenu>
+						
+						<h:outputText rendered="#[{1}.modoFormulario eq ''OFF'']"
+							value="#[{1}.registroEnEdicion.{0}.{4}]" />
+
+<<<*EOF*>>>
+0: nombre atributo
+1: instancia MB Controller
+2: instancia Converter
+3: instancia MB Controller del tipo VO del Atributo
+4: nombre atributo label del tipo VO del Atributo
+
+NOTA: es importante que los VO sobreescriban sus metodos de Equals y HashCode 

@@ -1,0 +1,83 @@
+package {0};
+
+import info.pedrodonte.util.JsfUtil;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import {1};
+import {2};
+
+@Named
+public class {3} implements Converter [
+	
+	@Inject
+	{4} serviceEJB;
+	
+	@Override
+	public Object getAsObject(FacesContext context, UIComponent component, String value) [
+		
+		if (value == null || value.length() == 0
+				|| JsfUtil.isDummySelectItem(component, value)) [
+			return null;
+		]
+
+		try [
+			return serviceEJB.obtenerRegistroPorID(getKey(value));
+		] catch (Exception e) [
+			e.printStackTrace();
+		]
+
+		return null;
+		
+	]
+
+	@Override
+	public String getAsString(FacesContext context, UIComponent component, Object object) [
+		if (object == null
+				|| (object instanceof String && ((String) object).length() == 0)) [
+			return null;
+		]
+
+		if (object instanceof {5}) [
+			{5} o = ({5}) object;
+			return getStringKey((o.{6} == null) ? -1 : o
+					.{6});
+		] else [
+			Logger.getLogger(this.getClass().getName()).log(
+					Level.SEVERE,
+					"object "+object+" is of type "+object.getClass().getName()+"; expected type: "+{5}.class.getName()+"");
+			return null;
+		]
+	]
+	
+	Integer getKey(String value) [
+		Integer key;
+		key = Integer.parseInt(value);
+		return key;
+	]
+
+	String getStringKey(long l) [
+		StringBuffer sb = new StringBuffer();
+		sb.append(l);
+		return sb.toString();
+	]
+
+]
+
+<<<*EOF*>>>
+0: paquete de destino
+1: full name VO paquete.ClaseVO
+2: full name EjbService, ejb.TagEJB
+3: Nombre Converter
+4: Interface EJB
+5: Clase VO
+6: Metodo que obtiene el label, getNombre()
+
+NOTA: es importante que los VO sobreescriban sus metodos de Equals y HashCode 

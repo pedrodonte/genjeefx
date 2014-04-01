@@ -1,0 +1,6 @@
+						<h:outputText value="{0}" />
+						<p:selectBooleanCheckbox styleClass="cpos-mantcli" 
+							value="#[{1}.registroEnEdicion.{0}]" 
+							rendered="#[{1}.modoFormulario ne ''OFF'']" /> 
+						<h:outputText rendered="#[{1}.modoFormulario eq ''OFF'']"
+							value="#[{1}.registroEnEdicion.{0}]" />

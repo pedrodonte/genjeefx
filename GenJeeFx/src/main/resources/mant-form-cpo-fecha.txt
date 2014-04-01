@@ -1,0 +1,7 @@
+						<h:outputText value="{0}" />
+						<p:calendar required="true" styleClass="cpos-mantcli"
+							requiredMessage="Debe ingresar una fecha"
+							rendered="#[{1}.modoFormulario ne ''OFF'']"
+							value="#[{1}.registroEnEdicion.{0}]" />
+						<h:outputText rendered="#[{1}.modoFormulario eq ''OFF'']"
+							value="#[{1}.registroEnEdicion.{0}]" />
